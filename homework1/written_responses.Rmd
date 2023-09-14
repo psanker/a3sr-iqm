@@ -1,0 +1,66 @@
+---
+title: "Homework 1"
+subtitle: "IQM"
+author: Patrick Anker
+header-includes:
+- \usepackage{amsmath}
+- \usepackage{amssymb}
+- \usepackage{units}
+- \usepackage{tikz}
+- \usepackage{bm}
+output: pdf_document
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+knitr::read_chunk(here::here("homework1/analysis.R"))
+set.seed(0xABBA)
+```
+
+# Question 1
+
+# Question 2
+
+# Question 3
+
+# Question 4
+
+# Question 5
+
+# Question 6
+
+```{r question6, echo=FALSE}
+```
+
+# Question 7
+
+We can approximate the distribution of grades to be roughly normal given that the process of adding points on an exam is roughly a random walk. Linear transformations on normal distributions are normal. Therefore, algebraically, we can compare unitless z-scores to find the linear transformation.
+
+\begin{align*}
+\frac{y-\mu^\prime}{\sigma^\prime}\ &=\ \frac{x-\mu}{\sigma} \\
+\sigma y\ &=\ \sigma^\prime x - \sigma^\prime \mu + \sigma\mu^\prime \\
+y\ &=\ \frac{\sigma^\prime}{\sigma}x + \left(\mu^\prime - \frac{\sigma^\prime}{\sigma}\mu\right)
+\end{align*}
+
+Substituting $\mu = 35$, $\mu^\prime = 100$, $\sigma = 10$, and $\sigma^\prime = 15$,
+
+\begin{align*}
+y(x)\ &= 1.5x + 47.5\ \rightarrow\ \{a = 47.5,\ b = 1.5\} &\ \textbf{(a)}
+\end{align*}
+
+To find the range, we need to insert the limits of $x$, 0 and 50:
+
+\begin{align*}
+y(0)\ &=\ 1.5(0) + 47.5\ \rightarrow y_{\mathrm{min}}=47.5 \\
+y(50)\ &=\ 1.5(50) + 47.5\ \rightarrow y_{\mathrm{max}}=122.5 \\
+\end{align*}
+
+Thus, the range of $y$ is $\left[47.5, 122.5\right]$. **(b)**
+
+A plot of the linear transformation follows: **(c)**
+
+```{r question7, echo=FALSE, fig.height=4}
+```
+
+# Question 8
+
+# Question 9
