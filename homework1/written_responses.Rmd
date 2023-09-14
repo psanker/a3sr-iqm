@@ -63,4 +63,27 @@ A plot of the linear transformation follows: **(c)**
 
 # Question 8
 
+<!-- For the definitions -->
+```{r question8a, include=FALSE}
+```
+
+Using the `dat_bass` data, we can compute the mean and standard deviation of bass lengths (assumed to be millimeters) by age:
+
+```{r, echo=FALSE}
+dat_bass |>
+  tidytable::select(
+    "age (years)" = Age,
+    "mean length (mm)" = length_mean,
+    "std. dev. length (mm)" = length_sd,
+  ) |>
+  unique() |>
+  tidytable::arrange(`age (years)`) |>
+  knitr::kable()
+```
+
+As shown in the table, there appears to be a somewhat linear trend between age and standard deviation of length. The following plot focuses on that relationship:
+
+```{r question8b, echo=FALSE}
+```
+
 # Question 9

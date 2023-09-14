@@ -34,3 +34,33 @@ ggplot(q7_dat, aes(x, y)) +
     title = "Grade transformation (with jittered sample grades)"
   ) +
   theme_bw()
+
+## ---- question8a ----
+dat_bass <- here::here("homework1/bass_data.csv") |>
+  data.table::fread() |>
+  tidytable::mutate(
+    length_mean = round(mean(Length), 0),
+    length_sd = round(sd(Length), 0),
+    .by = Age
+  )
+
+## ---- question8b ----
+sd_dat_bass <- dat_bass |>
+  tidytable::select(
+    age = Age,
+    length_sd
+  ) |>
+  unique()
+
+ggplot(sd_dat_bass, aes(age, length_sd)) +
+  geom_point() +
+  stat_smooth(
+    method = "lm",
+    formula = y ~ x
+  ) +
+  labs(
+    x = "Age (years)",
+    y = "Std. dev. fish length (mm)",
+    title = "Bass fish length uncertainty increases with age"
+  ) +
+  theme_bw()
