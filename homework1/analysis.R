@@ -12,8 +12,10 @@ library(ggplot2)
 
 q7_dat <- tidytable::tidytable(
   x = rnorm(100, mean = 35, sd = 10),
-  y = 1.5 * q7_x + 47.5
-)
+) |>
+  tidytable::mutate(
+    y = 1.5 * x + 47.5,
+  )
 
 ggplot(q7_dat, aes(x, y)) +
   geom_jitter(

@@ -1,6 +1,7 @@
 ---
 title: "Homework 1"
 subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
 author: Patrick Anker
 header-includes:
 - \usepackage{amsmath}
@@ -22,9 +23,67 @@ set.seed(0xABBA)
 
 # Question 3
 
+### Does air pollution cause lung damage?
+
+In this question, we're examining the effect of air pollution on the lungs. The predictor would be some measure of air pollution (e.g. levels of PM2.5 particulates), and the outcome would be a measure of lung tissue damage (perhaps repeated MRIs and peak air flow tests). If we were to use MRIs, I would expect to see a trend where as average PM2.5 counts increase, the amount of tissue occlusion (signifying damage) would also increase; if we were to use peak air flow tests, I would expect to see a trend where as average PM2.5 counts increase, peak air flow values would decrease. For the peak airflow measure, we would have to compensate for altitude.
+
+### Is it true that people who exercise more are healthier?
+
+The predictor in this situation would be something like average time spent exercising per week. We could be more precise and include how much time the heart rate is an exercise zone, but for longer term effects on health, the average time spent exercising is probably good enough. The outcome variable is more subtle: we could use something like some BMI measure, resting heart rate, or VO2 max. Each on their own is not a direct measure of health but they can point to a healthier lifestyle. For BMI and resting heart rate, I would expect to see trend comparing average time spent exercising to either BMI (assuming the baseline measurement was on the heavier side) or resting heart rate to be downward.
+
+### Are grapes sweeter the longer they sit on the vine?
+
+The predictor for this situation is pretty straightforward: the length of time a grape was on the vine. However, the outcome is more tricky. A naive approach would be to examine sugar content in the picked grapes, but the term "sweeter" is a subjective measure of taste, and flavor profiles can be moderated by all sorts of volatile compounds. I would probably administer a blinded taste test with a Likert scale of sweetness as the outcome (lower values being less sweet). With an ordinal outcome, one would have to use transformation like an ordered logit with a cumulative link function; after transforming the data, I would generally expect to see that as the average time on the vine increases, the transformed values would increase (showing that proportionally more people thought the sampled grapes were sweeter).
+
 # Question 4
 
+```{r, include=FALSE}
+props <- c(.5, .6, .4, .3)
+weights <- c(200, 250, 300, 250)
+
+avg <- round(weighted.mean(props, weights), 2)
+```
+
+Using the weighted averages formula
+
+$$
+E[x] = \frac{\sum_i x_i w_i}{\sum_i w_i}
+$$
+
+we can substitute in with the proportions per each cohort:
+
+$$
+E[p] = \frac{.5*200 + .6*250 + .4*300 + .3*250}{200 + 250 + 300 + 250}
+$$
+
+which evaluates to \(E[p] = \) `r avg`.
+
 # Question 5
+
+Since we are free to choose the weights, we can oversample the cohorts that are not in favor of higher taxes. While we do not know the actual proportions of each cohort in the city's population, we can aim for the 40% figure as a guide.
+
+We only have one equation, so effectively three of the weights can been arbitrarily chosen. For simplicity, let's choose $w_{\mathrm{18-29}} = 1$, $w_{\mathrm{30-44}} = 1$, and $w_{\mathrm{45-64}} = 2$ (because we want to oversample those who don't like raising taxes).
+
+This leaves the weight for the 65+ cohort. Some simple algebra will show that value:
+
+\begin{align*}
+.4\ &=\ \frac{.5*1 + .6*1 + .4*2 + .3*w}{4 + w} \\
+&=\ \frac{.3w + 1.9}{4 + w} \\
+w+4 &=\ \frac{.3w + 1.9}{.4} \\
+w\left(1 - \frac{3}{4}\right)\ &=\ 4.75 - 4 \\
+\frac{w}{4}\ &=\ \frac{3}{4} \\
+w\ &=\ 3
+\end{align*}
+
+For practicality, let's multiply the weights by 200; therefore our target cohort sizes are:
+
+```{r, echo=FALSE}
+tidytable::tidytable(
+  Cohort = c("18-29", "30-44", "45-64", "65+"),
+  "Weight (target recruitment size)" = c(200, 200, 400, 600)
+) |>
+  knitr::kable()
+```
 
 # Question 6
 
@@ -85,5 +144,7 @@ As shown in the table, there appears to be a somewhat linear trend between age a
 
 ```{r question8b, echo=FALSE}
 ```
+
+Presumably, the uncertainty increases over time because fewer and fewer fish are available to be measured.
 
 # Question 9
