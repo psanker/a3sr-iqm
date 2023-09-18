@@ -1,3 +1,13 @@
+# written and runs on R 4.2.1
+#
+# required packages:
+# - ggplot2
+# - tidytable (tidyverse but with data.table backend)
+# - here
+#
+# The assumption is that this file was run inside a folder called "homework1"
+# within an Rproj directory. Link to GitHub: <https://github.com/psanker/a3sr-iqm>
+
 ## ---- question6 ----
 draws <- rbinom(n = 1e5, size = 20, prob = 0.3)
 
