@@ -9,6 +9,8 @@ header-includes:
 - \usepackage{units}
 - \usepackage{tikz}
 - \usepackage{bm}
+- \usepackage{graphicx}
+- \usepackage{subcaption}
 output: pdf_document
 ---
 
@@ -19,7 +21,36 @@ set.seed(0xABBA)
 
 # Question 1
 
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.4\linewidth}
+    \includegraphics[width=\linewidth]{`r here::here("homework1/q1_sig3-9.jpg")`}
+    \caption{$\sigma \approx 3.9$}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.4\linewidth}
+    \includegraphics[width=\linewidth]{`r here::here("homework1/q1_sig10.jpg")`}
+    \caption{$\sigma \approx 10$}
+  \end{subfigure}
+  \caption{Line sketches of $y=10x + 30$ with differing standard deviations}
+\end{figure}
+
 # Question 2
+
+### (a) Forecasting/classification
+
+Everyday, millions of New Yorkers travel by the subway system. Using some metric of turnstile entries, the MTA could forecast the number of trains needed to be scheduled based on the passenger demand as a basic start. It could further model required trains by tracking average attendance to larger events across the city, e.g. Yankees or Nets games.
+
+### (b) Exploring associations
+
+As the climate crisis intensifies, modes of transportation and city planning need drastic changes to rapidly reduce the need and demand for automobiles (internal combustion engine automobiles at the very least). Advocates commonly propose e-bikes as an alternative to cars; however, necessary infrastructure needs to be put in place to make that transition happen. Often, car users come from further away where transit and bike access are limited. The NYC Department of Planning could examine the relationship of transit access and bike ridership to see if they are related. Having this knowledge could inform planning decisions for resource allocation, e.g. just putting in a bike lane or reconfiguring a major right of way to be bus-only while adding bike lanes in parallel.
+
+### (c) Extrapolation
+
+Following from **(b)**, the city also needs to make policy decisions that encourage the use of alternative modes like e-bikes. A common roadblock to uptake of differing modes is the lack of financial incentive. A survey could be implemented to examine the addition of a possible tax credit for purchasing one's own e-bike versus adding additional funds to the CitiBike program for its e-bike transition. The results of this survey, if appropriately sampled, could be extrapolated to the general NYC populace and help the City Council make a targeted policy shift based on what New Yorkers would actually prefer.
+
+### (d) Causal Inference
+
+The classic traffic engineering problem is **induced demand**: the more there is infrastructure for a mode, the more likely that mode will be used -- inducing demand. This has ensnared American urban design for the last 80 years and needs to be addressed head-on. Locally, an experiment could be conducted: if a roadway is closed to vehicular traffic, do neighboring transit or micromobility (e.g. bikeshare) modes see an increase in use? Since the Covid pandemic, we have seen an explosion in popularity of these kinds of "Quiet Streets" treatments. This causal question is vital to be understood for planners to create low-cost programs across the city to reverse the induced demand problem from cars to human-scale transport.
 
 # Question 3
 
@@ -145,6 +176,5 @@ As shown in the table, there appears to be a somewhat linear trend between age a
 ```{r question8b, echo=FALSE}
 ```
 
-Presumably, the uncertainty increases over time because fewer and fewer fish are available to be measured.
+Presumably, the uncertainty increases over time because fewer and fewer fish are available to be measured, and according to the table, it seems the fish that live longer are also physically larger. It follows that perhaps the fish that lived long enough to be sampled were also some of the healthier fish.
 
-# Question 9
