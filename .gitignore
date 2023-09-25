@@ -81,8 +81,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# PDFs
+# Submission materials
 *.pdf
+*.zip
 
 # Random stuff
 written_responses_files
