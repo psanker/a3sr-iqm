@@ -1,0 +1,178 @@
+---
+title: "Homework 2"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+- \usepackage{amsmath}
+- \usepackage{amssymb}
+- \usepackage{units}
+- \usepackage{tikz}
+- \usepackage{bm}
+- \usepackage{graphicx}
+- \usepackage{subcaption}
+output: pdf_document
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+knitr::read_chunk(here::here("homework2/analysis.R"))
+set.seed(0xABBA)
+```
+
+# Question 1
+
+```{r question1, echo=FALSE}
+```
+
+The result of the $N=36$ observation simulation is $\mathrm{se}\ =\ `r round(se_sml, 2)`\ \approx\ 1$. See `analysis.R` for the exact code. The standard error of the mean is approximately $1$ because, analytically, the SEM is
+
+$$
+\mathrm{SEM}\ =\ \frac{\sigma}{\sqrt{N}}
+$$
+
+With $\sigma\ =\ 6$ and $N\ =\ 36$, this fraction reduces to $1$. It follows then that if the generating true standard deviation $\sigma$ were increased to $12$, then the number of observations would have to be increased to $144$ to maintain an $\mathrm{SEM}\ =\ 1$.
+
+# Question 2
+
+The treatment effect is the difference between the treated and control samples: $0.5 - 0.4 = 0.1$. Moreover, for each proportion you add the errors in quadrature:
+
+$$
+s_{\mathrm{tot}}\ =\ \sqrt{s_a^2 + s_b^2}
+$$
+
+The treatment and control groups have the same size: $500$. Following the formula for the $\mathrm{SEM}$ and the standard deviation for Bernoulli variables
+
+$$
+\sigma_{\mathrm{Bern}}\ =\ \sqrt{p(1-p)}
+$$
+
+the treated sample's proportion's standard error would be
+
+\begin{align*}
+s_T\ &=\ \sqrt{\frac{.25}{500}} \\
+&\approx\ 0.0224
+\end{align*}
+
+and the control sample's proportion's standard error would be
+
+
+\begin{align*}
+s_C\ &=\ \sqrt{\frac{0.4*0.6}{500}} \\
+&\approx\ 0.0219
+\end{align*}
+
+Adding in quadrature,
+
+\begin{align*}
+s_{\mathrm{effect}}\ &=\ \sqrt{s_T^2 + s_C^2} \\
+&=\ \sqrt{(0.0224)^2 + (0.0219)^2}\\
+&\approx\ 0.03
+\end{align*}
+
+Therefore the estimate of the treatment effect is $0.10\pm0.03$. $\Box$
+
+# Question 3
+
+```{r question3, echo=FALSE, cache=TRUE}
+```
+
+```{r, echo=FALSE}
+m_sims <- round(mean(sims), 2)
+s_sims <- round(sd(sims), 2)
+```
+
+After running a simulation 1,000 times, the estimated probability that the better shooter would make more shots is $`r m_sims`\pm`r s_sims`$. Please see `analysis.R` for the simulation source code.
+
+# Question 4
+
+To distinguish the 40% shooter from the 30% shooter, we need to have a sufficiently narrow enough 97.5% confidence interval to exclude 0 97.5% of the time. In other words, for what $N$ is $\hat{x}-2.241s$ greater than 0?
+
+First, need the total (squared) standard error:
+
+\begin{align*}
+s_{\mathrm{tot}}^2\ &=\ s_A^2 + s_B^2 \\
+&=\ \frac{0.3*0.7}{N} + \frac{0.4*0.6}{N} \\
+&=\ \frac{0.45}{N} \\
+\end{align*}
+
+Then to solve the inequality:
+
+\begin{align*}
+0.1 - 2.241*\sqrt{\frac{0.45}{N}}\ &>\ 0 \\
+\frac{1.503}{\sqrt{N}}\ &<\ 0.1 \\
+\frac{\sqrt{N}}{1.503}\ &>\ 10 \\
+N\ &\gtrsim\ 225.9 \\
+&\gtrsim\ 226 &\Box
+\end{align*}
+
+# Question 5
+
+```{r question5a, echo=FALSE}
+```
+
+See `analysis.R` for the code that generates the following plot and numerical simulation results:
+
+```{r question5b, echo=FALSE, out.width="5in", fig.align="center"}
+```
+
+From the simulation, the estimate of the difference of average heights is $`r round(mean(sims), 2)`\pm`r round(sd(sims), 2)`~\mathrm{in}$.
+
+Analytically, the mean difference in average heights is $69.1-63.7 = 5.4$ and the standard deviation is
+
+\begin{align*}
+s_{\mathrm{diff}}\ &=\ \frac{\sqrt{(2.9)^2 + (2.7)^2}}{10} \\
+&\approx\ 0.4
+\end{align*}
+
+The simulation and analytic results match. $\Box$
+
+# Question 6
+
+See `analysis.R` for the code that generates this simulation.
+
+```{r question6, include=FALSE}
+```
+
+Roughly `r round(100*mean(ci_includes), 2)`\% of the confidence intervals include the true parameter value of 0.1. **(b)**
+
+The following table shows the sampling distribution statistics from the simulation: **(c)**
+
+```{r question6a, echo=FALSE}
+tidytable::tidytable(
+  "Mean" = q6_stats$mean_sims,
+  "Standard deviation" = q6_stats$sd_sims,
+) |>
+  knitr::kable(
+    caption = "Sampling distribution statistics for estimated treatment effect (unitless)",
+    digits = 2
+  )
+```
+
+# Question 7
+
+Continuing from Question 6, the simulations where the estimated effect size is statistically significant from zero are the ones where zero is not included in the corresponding confidence interval. Approximately `r round(100 * (1 - mean(in_interval(cis, 0))), 2)`\% of the intervals do not include zero.
+
+```{r question7, include=FALSE}
+```
+
+```{r question7a, echo=FALSE}
+tidytable::tidytable(
+  "Mean" = q7_stats$mean_sims,
+  "Standard deviation" = q7_stats$sd_sims
+) |>
+  knitr::kable(
+    caption = "Sampling distribution for simulations that statistically exclude zero",
+    digits = 2
+  )
+```
+
+Note that the mean is higher on average than the overall mean, but the standard deviation is wider than the overall standard distribution. Presumably, this is due to fewer observations as well as being a measure of uncertainty of some outliers. $\Box$
+
+# Extra credit
+
+```{r extra-credit, include=FALSE}
+```
+
+Essentially, Sabrina is investigating the probability of $P(h_2 | h_1)$. However, Sabrina's intuition is misled. Rather than expecting to see around 50% heads, because of the conditional probability we should expect to see $P(h)*P(h) = 0.5*0.5 = 25$% heads since each flip is independent but the **record** is not.
+
+This bears out with simulation. I simulated this experiment 1,000 times and recorded the proportion of heads. The estimated proportion is $`r round(mean(sims), 2)`\pm`r round(sd(sims), 2)`$, which follows the conditional probability reasoning above. See `analysis.R` for the simulation code.
