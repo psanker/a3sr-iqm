@@ -1,0 +1,34 @@
+---
+title: "Homework 3"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+- \usepackage{amsmath}
+- \usepackage{amssymb}
+- \usepackage{units}
+- \usepackage{tikz}
+- \usepackage{bm}
+- \usepackage{graphicx}
+- \usepackage{subcaption}
+output: pdf_document
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+knitr::read_chunk(here::here("homework3/analysis.R"))
+set.seed(0xABBA)
+```
+
+# Question 1
+
+# Question 2
+
+# Question 3
+
+# Question 4
+
+# Question 5
+
+# Question 6
+
+# Extra Credit
