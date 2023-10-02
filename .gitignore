@@ -85,5 +85,8 @@ Temporary Items
 *.pdf
 *.zip
 
+# Render products
+*.md
+
 # Random stuff
 written_responses_files
