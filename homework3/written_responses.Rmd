@@ -4,31 +4,92 @@ subtitle: "IQM"
 date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
 author: Patrick Anker
 header-includes:
-- \usepackage{amsmath}
-- \usepackage{amssymb}
-- \usepackage{units}
-- \usepackage{tikz}
-- \usepackage{bm}
-- \usepackage{graphicx}
-- \usepackage{subcaption}
-output: pdf_document
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: "../preamble.tex"
+    toc: false
+    extra_dependencies: "float"
 ---
 
-```{r setup, include=FALSE, cache=FALSE}
+```{r setup1, include=FALSE, cache=FALSE}
 knitr::read_chunk(here::here("homework3/analysis.R"))
-set.seed(0xABBA)
 ```
 
-# Question 1
+```{r preamble, include=FALSE}
+```
 
-# Question 2
+# Question 1 {-}
 
-# Question 3
+# Question 2 {-}
 
-# Question 4
+# Question 3 {-}
 
-# Question 5
+# Question 4 {-}
 
-# Question 6
+# Question 5 {-}
 
-# Extra Credit
+See `analysis.R` for the definition of the function `sim_and_plot()`.
+
+```{r question5, echo=FALSE}
+```
+
+```{r q5f1, echo=FALSE, fig.cap="Code evaluation: does $\\{a, b\\}$=0 create uncorrelated noise?", out.width="65%", fig.align="center"}
+```
+
+```{r q5f2, echo=FALSE, fig.cap="Examining the effect of changing the variance -- larger $s$ values expectedly increase the point spread", fig.align="center", fig.subcap=c("Smaller variance", "Larger variance"), fig.ncol=2, out.width="50%"}
+```
+
+Fig. \@ref(fig:q5f1) checks to make sure that the code renders a flat line in the trivial case. There is a slight negative slope, but on the whole it does seem that there is no relation between $x$ and $y$. More interestingly, Fig. \@ref(fig:q5f2) examines the effect of increasing the variance $\sigma^2$ on both the scatterplot and the regression. 
+
+```{r q5f2-compare, echo=FALSE}
+```
+
+```{r q5t1, echo=FALSE, fig.pos="H"}
+kableExtra::kable(
+  tab_1,
+  digits = 3,
+  caption = "Comparison of model uncertainty",
+  format = "latex",
+  booktabs = TRUE
+) |>
+  kableExtra::kable_styling()
+```
+
+Visually, it's clear that there's more uncertainty due to the way these data are spread out, but numerically it's hard to see without looking at the model outputs. Tab. \@ref(tab:q5t1) shows that (b), with the higher variance, has more uncertainty in both the intercept and slope estimates.
+
+```{r q5f3, echo=FALSE, fig.cap="Examining the effect of changing the observation count -- smaller $n$ values expectedly make the fit less stable", fig.align="center", fig.subcap=c("Smaller observation count", "Larger observation count"), fig.ncol=2, out.width="50%"}
+```
+
+```{r q5f3-compare, echo=FALSE}
+```
+
+```{r q5t2, echo=FALSE, fig.pos="H"}
+kableExtra::kable(
+  tab_2,
+  digits = 3,
+  caption = "Comparison of model uncertainty",
+  format = "latex",
+  booktabs = TRUE
+) |>
+  kableExtra::kable_styling()
+```
+
+Finally, Fig. \@ref(fig:q5f3) and Tab. \@ref(tab:q5t2) examine the effect of changing the number of observations $n$. While the resulting slopes are similar, it's clear from Tab. \@ref(tab:q5t2) that there is a 3-4x increase in uncertainty in the estimates of both the intercept and slope.
+
+# Question 6 {-}
+
+```{r question6, include=FALSE}
+```
+
+```{r q6f1, echo=FALSE, fig.cap="Estimates of intercept and slope improve with more observations", fig.align="center", fig.subcap=c("Intercept", "Slope"), fig.ncol=2, out.width="50%"}
+```
+
+As Fig. \@ref(fig:q6f1) shows, the more observations there are to use as model inputs, the more certain the model becomes of its estimates. I provided quantile lines as well to highlight the narrowing quality of the scatterplot as $n$ increases.
+
+```{r q6f2, echo=FALSE, fig.cap="Std. errors of intercept and slope improve with more observations", fig.align="center", fig.subcap=c("Intercept", "Slope"), fig.ncol=2, out.width="50%"}
+```
+
+Fig. \@ref(fig:q6f2) highlights that the standard errors have a different characteristic curve as $n$ increases. This is to be expected as the standard error should scale $\sim\ n^{-1/2}$.
+
+# Extra Credit {-}
