@@ -35,9 +35,24 @@ make_map <- function(type) {
 }
 
 map_dbl <- make_map(double(1L))
+map_int <- make_map(integer(1L))
 
 set.seed(0xABBA)
 line_color <- "#d12e66"
+
+# ---- question3 ----
+y <- 1 + 3 * sample(1:3, 1e4, replace = TRUE) + rnorm(1e4)
+dat <- tidytable::tidytable(y = y)
+
+q3_plot <- ggplot2::ggplot(dat, ggplot2::aes(x = y)) +
+  ggplot2::geom_histogram(
+    bins = 40,
+    fill = "#dadada",
+    color = "grey"
+  ) +
+  ggplot2::theme_bw()
+
+q3_plot
 
 # ---- question5 ----
 sim_and_plot <- function(a, b, n, sigma,
@@ -205,3 +220,46 @@ plt4 <- ggplot2::ggplot(dat, ggplot2::aes(x = n, y = se_slope)) +
 
 plt3
 plt4
+
+# ---- extra-credit-a ----
+# Part (a)
+sim_hoops <- function(i_sim) {
+  # Output buffer
+  out <- rep(NA_integer_, 32)
+  stop_game <- FALSE
+
+  # Hang check
+  iter <- 0
+  max_iter <- 32000
+
+  while (!isTRUE(stop_game) && iter < max_iter) {
+    # Adjust for buffer overflow
+    if (sum(is.na(out)) < 1) {
+      out <- c(out, rep(NA_integer_, length(out)))
+    }
+
+    i <- which(is.na(out))[[1]]
+    out[[i]] <- sample(0:1, 1, prob = c(0.4, 0.6))
+
+    if (i >= 2) {
+      if (all(out[c(i - 1, i)] == 0)) {
+        stop_game <- TRUE
+      }
+    }
+
+    iter <- iter + 1
+  }
+
+  if (iter >= max_iter) {
+    stop("Maximum number of iterations hit", call. = FALSE)
+  }
+
+  out[!is.na(out)]
+}
+
+# ---- extra-credit-b ----
+sims <- lapply(seq_len(1e3), sim_hoops)
+n_shots <- map_int(sims, length)
+
+n_made <- map_int(sims, sum)
+p_made <- n_made / n_shots

@@ -21,11 +21,36 @@ knitr::read_chunk(here::here("homework3/analysis.R"))
 
 # Question 1 {-}
 
+Generally, the outcomes $Y_i$ in a linear model are not identically distributed because there is a generating function of the predictors that affect the outcomes. Question 3 is a great example where each individual $Y_i$ has a different distribution. However, if there was no relation of the predictors to the outcome (i.e. all coefficients to the predictors are zero), then each $Y_i$ would be identically distributed as there is no underlying generating function.
+
+Instead, we care about the distribution of the *residuals* of the model fit. If a model is a good fit, then the residuals should be identically distributed ("homoscedastic"). If the residuals are *not* identically distributed ("heteroscedastic"), then the model may have too many or too few predictors.
+
 # Question 2 {-}
+
+```{r, echo=FALSE, out.width="55%", fig.align="center", fig.cap="Theoretical periodic data"}
+knitr::include_graphics(here::here("homework3/q2.jpg"))
+```
+
+The sketch I provided examines some theoretical data measurements of current in milliamperes versus time in seconds. In some cases, this could be a linear relationship (or stepwise) if the current is operating in a DC domain, which would imply a constant or linearly changing voltage. However, given that the data oscillates back and forth, a linear model would not suffice. Instead, a sinusoidal model would be better in the alternating current domain.
 
 # Question 3 {-}
 
+```{r, echo=FALSE, out.width="40%", fig.align="center", fig.cap="Linear model against integral inputs", fig.pos="H"}
+knitr::include_graphics(here::here("homework3/q3.jpg"))
+```
+
+This sketch jitters the data points, which ought to be sampled from the set $\{1, 2, 3\}$, so that the uncertainty can be displayed.
+
+```{r question3, echo=FALSE, fig.cap="Histogram of $y$ values at large $N$", fig.align="center", out.width="45%"}
+```
+
+Even though the input data are integers, $y$ will eventually have a Normal distribution due to the perturbations in the data. These small deviations form a sort of random walk which generalizes at large $N$ to the Normal distribution. We can empirically confirm this with the histogram shown in Fig. \@ref(fig:question3). At $N=10,000$ we can still see three peaks from the original integral data, but already the bell curve is starting to take shape. This is a consequence of the Central Limit Theorem.
+
 # Question 4 {-}
+
+```{r, echo=FALSE, out.width="55%", fig.align="center", fig.cap="Sketch of the relationship between midterm grades and final grades", fig.pos="H"}
+knitr::include_graphics(here::here("homework3/q4.jpg"))
+```
 
 # Question 5 {-}
 
@@ -34,10 +59,10 @@ See `analysis.R` for the definition of the function `sim_and_plot()`.
 ```{r question5, echo=FALSE}
 ```
 
-```{r q5f1, echo=FALSE, fig.cap="Code evaluation: does $\\{a, b\\}$=0 create uncorrelated noise?", out.width="65%", fig.align="center"}
+```{r q5f1, echo=FALSE, fig.cap="Code evaluation: does $\\{a, b\\}$=0 create uncorrelated noise?", out.width="55%", fig.align="center"}
 ```
 
-```{r q5f2, echo=FALSE, fig.cap="Examining the effect of changing the variance -- larger $s$ values expectedly increase the point spread", fig.align="center", fig.subcap=c("Smaller variance", "Larger variance"), fig.ncol=2, out.width="50%"}
+```{r q5f2, echo=FALSE, fig.cap="Examining the effect of changing the variance -- larger $s$ values expectedly increase the point spread", fig.align="center", fig.subcap=c("Smaller variance", "Larger variance"), fig.ncol=2, out.width="45%", fig.pos="H"}
 ```
 
 Fig. \@ref(fig:q5f1) checks to make sure that the code renders a flat line in the trivial case. There is a slight negative slope, but on the whole it does seem that there is no relation between $x$ and $y$. More interestingly, Fig. \@ref(fig:q5f2) examines the effect of increasing the variance $\sigma^2$ on both the scatterplot and the regression. 
@@ -58,13 +83,13 @@ kableExtra::kable(
 
 Visually, it's clear that there's more uncertainty due to the way these data are spread out, but numerically it's hard to see without looking at the model outputs. Tab. \@ref(tab:q5t1) shows that (b), with the higher variance, has more uncertainty in both the intercept and slope estimates.
 
-```{r q5f3, echo=FALSE, fig.cap="Examining the effect of changing the observation count -- smaller $n$ values expectedly make the fit less stable", fig.align="center", fig.subcap=c("Smaller observation count", "Larger observation count"), fig.ncol=2, out.width="50%"}
+```{r q5f3, echo=FALSE, fig.cap="Examining the effect of changing the observation count -- smaller $n$ values expectedly make the fit less stable", fig.align="center", fig.subcap=c("Smaller observation count", "Larger observation count"), fig.ncol=2, out.width="45%"}
 ```
 
 ```{r q5f3-compare, echo=FALSE}
 ```
 
-```{r q5t2, echo=FALSE, fig.pos="H"}
+```{r q5t2, echo=FALSE}
 kableExtra::kable(
   tab_2,
   digits = 3,
