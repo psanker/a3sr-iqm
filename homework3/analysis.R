@@ -13,6 +13,13 @@
 # to get the dependencies for creating the PDF.
 
 # ---- preamble ----
+report_uncertainty <- function(x, digits = 2) {
+  paste0(
+    "$", round(mean(x), digits = digits),
+    "\\pm", round(sd(x), digits = digits), "$"
+  )
+}
+
 std_errs <- function(mod) {
   summary(mod)$coefficients[, 2]
 }
@@ -40,6 +47,9 @@ map_int <- make_map(integer(1L))
 set.seed(0xABBA)
 line_color <- "#d12e66"
 
+hist_fill <- "#dadada"
+hist_color <- "grey"
+
 # ---- question3 ----
 y <- 1 + 3 * sample(1:3, 1e4, replace = TRUE) + rnorm(1e4)
 dat <- tidytable::tidytable(y = y)
@@ -47,8 +57,8 @@ dat <- tidytable::tidytable(y = y)
 q3_plot <- ggplot2::ggplot(dat, ggplot2::aes(x = y)) +
   ggplot2::geom_histogram(
     bins = 40,
-    fill = "#dadada",
-    color = "grey"
+    fill = hist_fill,
+    color = hist_color
   ) +
   ggplot2::theme_bw()
 
@@ -263,3 +273,34 @@ n_shots <- map_int(sims, length)
 
 n_made <- map_int(sims, sum)
 p_made <- n_made / n_shots
+
+plt_ec_b <- ggplot2::ggplot(
+  tidytable::tidytable(n = n_shots),
+  ggplot2::aes(x = n)
+) +
+  ggplot2::geom_histogram(
+    fill = hist_fill,
+    color = hist_color,
+    bins = 25
+  ) +
+  ggplot2::labs(
+    x = "Number of shots",
+    y = "Count"
+  ) +
+  ggplot2::theme_bw()
+
+plt_ec_b
+
+# ---- extra-credit-c ----
+plt_ec_c <- ggplot2::ggplot(
+  tidytable::tidytable(x = n_shots, y = p_made),
+  ggplot2::aes(x = x, y = y)
+) +
+  ggplot2::geom_jitter(alpha = 0.5) +
+  ggplot2::labs(
+    x = "Total number of shots",
+    y = "Proportion being successful shots"
+  ) +
+  ggplot2::theme_bw()
+
+plt_ec_c
