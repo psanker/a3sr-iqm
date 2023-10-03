@@ -1,0 +1,73 @@
+---
+title: "Special Cases of SLR"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: "../preamble.tex"
+    toc: false
+    extra_dependencies: "float"
+---
+
+```{r setup}
+set.seed(0xABBA)
+```
+
+# Mean / std. err. by modeling against intercept
+
+```{r}
+n <- 100
+y0 <- rnorm(n, mean = 2, sd = 5)
+```
+
+```{r}
+mean_y0 <- mean(y0)
+se_y0 <- sd(y0) / sqrt(n)
+```
+
+Now fit with `lm()`
+
+```{r}
+mod <- lm(y0 ~ 1)
+summary(mod)
+```
+
+Hey sweet.
+
+# Examining group differences
+
+```{r}
+n_1 <- 40
+y_1 <- rnorm(n_1, mean = 8, sd = 5)
+
+mean_y1 <- mean(y_1)
+se_y1 <- sd(y_1) / sqrt(n_1)
+```
+
+Let's estimate the difference in means and the se of of the difference directly.
+
+```{r}
+mean_diff <- mean_y1 - mean_y0
+```
+
+## Now use regression!
+
+```{r}
+y <- c(y0, y_1)
+grp <- c(rep(0, length(y0)), rep(1, length(y_1)))
+
+dat <- tidytable::tidytable(
+  y = y,
+  x = grp
+)
+```
+
+```{r}
+mod2 <- lm(y ~ x, data = dat)
+summary(mod2)
+```
+
+

@@ -1,0 +1,63 @@
+---
+title: "Hibbs Exercise"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: "../preamble.tex"
+    toc: false
+    extra_dependencies: "float"
+---
+
+```{r setup}
+set.seed(0xABBA)
+```
+
+```{r}
+hibbs_dat <- readr::read_delim(here::here("lecture4/hibbs.dat"), delim = " ")
+```
+
+```{r}
+mod <- lm(vote ~ growth, data = hibbs_dat)
+```
+
+```{r}
+intercept <- coef(mod)[1]
+intercept
+```
+
+The incumbent will lose (assuming popular voting scheme).
+
+Units of slope must be $\% / \% = 1$.
+
+```{r}
+std_errs <- function(mod) {
+  summary(mod)$coefficients[, 2]
+}
+
+slope <- coef(mod)[2]
+se_slope <- std_errs(mod)[2]
+ci <- c(slope - 1.96 * se_slope, slope + 1.96 * se_slope)
+ci
+```
+
+```{r}
+hibbs_dat |> 
+  tidytable::filter(year == 2008)
+```
+
+Obama would win because bad growth under the Republican Party (0.1%): `r round(coef(mod)[1] + coef(mod)[2]*0.1, 1)`\%
+
+```{r}
+summary(mod)
+```
+
+What are the chances that Hillary would win?
+
+```{r}
+1 - pnorm(50, mean = 52.4, sd = 3.8)
+```
+
