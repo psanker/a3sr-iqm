@@ -1,0 +1,72 @@
+---
+title: "Homework 4"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: "../preamble.tex"
+    toc: false
+    extra_dependencies: "float"
+---
+
+```{r setup1, include=FALSE, cache=FALSE}
+knitr::read_chunk(here::here("homework4/analysis.R"))
+```
+
+```{r preamble, include=FALSE}
+```
+
+# Question 1 {-}
+
+```{r question1, echo=FALSE}
+```
+
+```{r q1f1, echo=FALSE, out.width="55%", fig.align="center", fig.cap="Examination of maneuver performance (a)"}
+```
+
+Fig. \@ref(fig:q1f1) shows the comparison of scores, and they follow a linear trend. This is to be expected since the scores are both derived from a natural ability plus some noise ($\sigma=1.5$).
+
+```{r q1t1, include=FALSE}
+```
+
+```{r q1t1-out, echo=FALSE}
+kableExtra::kable(
+  tab_q1t1,
+  booktabs = TRUE,
+  escape = FALSE,
+  caption = "Extreme values are regressed to the mean"
+) |>
+  kableExtra::kable_styling(position = "center")
+```
+
+However, Tab. \@ref(tab:q1t1-out) shows that the mean score differences are not approximately zero (save for the "None" case). The negative feedback cases show a positive mean score difference, whereas the positive feedback cases show a negative mean score difference. This is purely a numerical artifact of averages: averages create shrinkage from extreme values. However, they are only *point estimates*. The full picture must include the reality that each score pair is drawn from a distribution, which has inherent noise.
+
+# Question 2 {-}
+
+```{r question2-a, echo=FALSE}
+```
+
+```{r q2t1, echo=FALSE}
+kableExtra::kable(
+  tab_q2t1,
+  booktabs = TRUE,
+  caption = "Comparison of methods for calculating mean bass fish length"
+) |>
+  kableExtra::kable_styling(position = "center")
+```
+
+```{r question2-b, echo=FALSE}
+```
+
+```{r q2t2, echo=FALSE}
+kableExtra::kable(
+  tab_q2t2,
+  booktabs = TRUE,
+  caption = "Comparison of methods for calculating difference of mean incomes by age group"
+) |>
+  kableExtra::kable_styling(position = "center")
+```
+
