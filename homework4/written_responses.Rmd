@@ -72,7 +72,7 @@ kableExtra::kable(
   kableExtra::kable_styling(position = "center")
 ```
 
-Tab. \@ref(tab:q2t1) shows that regressing the length of bass fish against the intercept produces the exact same results as analytically calculating the estimate and standard error of mean length.
+Tab. \@ref(tab:q2t1) shows that regressing the length of bass fish against the intercept produces the exact same results as analytically calculating the estimate and standard error of mean length. Values were rounded to the nearest millimeter, as that was the level of measurement precision, but if you examine the code in `analysis.R` you will see that the computed numerical values are identical.
 
 ```{r question2-b, echo=FALSE}
 ```
@@ -81,12 +81,12 @@ Tab. \@ref(tab:q2t1) shows that regressing the length of bass fish against the i
 kableExtra::kable(
   tab_q2t2,
   booktabs = TRUE,
-  caption = "Comparison of methods for calculating difference of mean incomes by age group"
+  caption = "Comparison of methods for calculating difference of mean incomes by age group (assuming USD)"
 ) |>
   kableExtra::kable_styling(position = "center")
 ```
 
-Tab. \@ref(tab:q2t2) shows that using dummy codes to determine group differences in a linear model yields _almost_ the exact same figures. The only difference is in the standard error, which is off by about 12.
+Tab. \@ref(tab:q2t2) shows that using dummy codes to determine group differences in a linear model yields _almost_ the exact same figures. The only difference is in the standard error, which is off by about \$12.
 
 # Question 3 {-}
 

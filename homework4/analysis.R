@@ -186,8 +186,8 @@ mod_earnings <- lm(earn ~ is_old, data = dat_earnings_sub)
 
 tab_q2t2 <- tidytable::tidytable(
   "Calculation method" = c("Analytical", "lm model"),
-  "Est. (USD)" = c(est_income_diff, coef(mod_earnings)[[2]]),
-  "Std. err. (USD)" = c(se_income_diff, std_errs(mod_earnings)[[2]])
+  "Est. (USD)" = round(c(est_income_diff, coef(mod_earnings)[[2]]), 2),
+  "Std. err. (USD)" = round(c(se_income_diff, std_errs(mod_earnings)[[2]]), 2)
 )
 
 # ---- question4 ----
