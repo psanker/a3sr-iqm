@@ -189,3 +189,113 @@ tab_q2t2 <- tidytable::tidytable(
   "Est. (USD)" = c(est_income_diff, coef(mod_earnings)[[2]]),
   "Std. err. (USD)" = c(se_income_diff, std_errs(mod_earnings)[[2]])
 )
+
+# ---- question4 ----
+dat_ubs <- tidytable::as_tidytable(alr4::UBSprices)
+
+plt_q4f1 <- ggplot2::ggplot(
+  dat_ubs,
+  ggplot2::aes(x = bigmac2003, y = bigmac2009)
+) +
+  ggplot2::geom_point() +
+  ggplot2::geom_abline(
+    ggplot2::aes(slope = 1, intercept = 0, color = "#000000"),
+    alpha = 0.5,
+    show.legend = FALSE,
+  ) +
+  ggplot2::geom_smooth(
+    formula = y ~ x,
+    method = "lm",
+    ggplot2::aes(color = line_color),
+  ) +
+  ggplot2::scale_colour_manual(
+    name = "Lines",
+    labels = c("y = x", "ols"),
+    values = c("#000000", line_color)
+  ) +
+  ggplot2::labs(
+    x = "Big Mac cost in 2003 (minutes of labor)",
+    y = "Big Mac cost in 2009 (minutes of labor)",
+  ) +
+  ggplot2::theme_bw()
+
+# Part 3
+log_dat_ubs <- dat_ubs |>
+  tidytable::mutate(
+    bigmac2003 = log(bigmac2003),
+    bigmac2009 = log(bigmac2009),
+  )
+
+plt_q4f2 <- ggplot2::ggplot(
+  log_dat_ubs,
+  ggplot2::aes(x = bigmac2003, y = bigmac2009)
+) +
+  ggplot2::geom_point() +
+  ggplot2::geom_smooth(
+    formula = y ~ x,
+    method = "lm",
+    color = line_color,
+  ) +
+  ggplot2::labs(
+    x = "Log of Big Mac cost in 2003",
+    y = "Log of Big Mac cost in 2009",
+  ) +
+  ggplot2::theme_bw()
+
+# Residual comparison
+mod_nolog <- lm(bigmac2009 ~ bigmac2003, data = dat_ubs)
+mod_log <- lm(bigmac2009 ~ bigmac2003, data = log_dat_ubs)
+
+res_nolog <- residuals(mod_nolog)
+res_log <- residuals(mod_log)
+
+dat_residuals <- tidytable::tidytable(
+  res = c(res_nolog, res_log),
+  model = as.factor(c(
+    rep("No transform", length(res_nolog)),
+    rep("Log transform", length(res_log))
+  )),
+) |>
+  tidytable::mutate(res = scale(res)[, 1], .by = model)
+
+plt_q4f3 <- ggplot2::ggplot(
+  dat_residuals,
+  ggplot2::aes(
+    x = model,
+    y = res,
+  )
+) +
+  ggplot2::geom_boxplot() +
+  ggplot2::labs(
+    x = "Model transform",
+    y = "Residual (z-score)",
+  ) +
+  ggplot2::theme_bw()
+
+# ---- q4f5 ----
+plt_q4f5_1 <- ggplot2::ggplot(
+  dat_ubs,
+  ggplot2::aes(x = bigmac2003)
+) +
+  ggplot2::geom_histogram(
+    bins = 15,
+    fill = hist_fill,
+    color = hist_color,
+  ) +
+  ggplot2::labs(x = "Labor cost in minutes") +
+  ggplot2::theme_bw()
+
+plt_q4f5_2 <- ggplot2::ggplot(
+  dat_ubs,
+  ggplot2::aes(x = bigmac2009)
+) +
+  ggplot2::geom_histogram(
+    bins = 15,
+    fill = hist_fill,
+    color = hist_color,
+  ) +
+  ggplot2::labs(x = "Labor cost in minutes") +
+  ggplot2::theme_bw()
+
+plt_q4f5_1
+plt_q4f5_2

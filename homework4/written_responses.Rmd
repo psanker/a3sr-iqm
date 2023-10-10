@@ -14,6 +14,20 @@ output:
 
 ```{r setup1, include=FALSE, cache=FALSE}
 knitr::read_chunk(here::here("homework4/analysis.R"))
+
+# Allowing code chunk crossreferences
+# https://stackoverflow.com/questions/50702942/does-rmarkdown-allow-captions-and-references-for-code-chunks
+old_source <- knitr::knit_hooks$get("source")
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- old_source(x, options)
+
+  if (!is.null(options$code.cap)) {
+    x <- paste0("\\label{", options$label, "}", x)
+    x <- paste0("\\captionof{chunk}{", options$code.cap, "}", x)
+  }
+
+  x
+})
 ```
 
 ```{r preamble, include=FALSE}
@@ -58,6 +72,8 @@ kableExtra::kable(
   kableExtra::kable_styling(position = "center")
 ```
 
+Tab. \@ref(tab:q2t1) shows that regressing the length of bass fish against the intercept produces the exact same results as analytically calculating the estimate and standard error of mean length.
+
 ```{r question2-b, echo=FALSE}
 ```
 
@@ -69,4 +85,41 @@ kableExtra::kable(
 ) |>
   kableExtra::kable_styling(position = "center")
 ```
+
+Tab. \@ref(tab:q2t2) shows that using dummy codes to determine group differences in a linear model yields _almost_ the exact same figures. The only difference is in the standard error, which is off by about 12.
+
+# Question 3 {-}
+
+The main difference between the observations above the $y=x$ line and those below is that those above the line had higher prices for rice (in labor minutes) in 2009 compared to 2003. As an example, Vilnius had an almost 4x increase in rice price from 2003 to 2009. Conversely, those cities below the $y=x$ line had lower prices for rice in 2009 compared to 2003. For example, Mumbai's price more than halved from 2003 to 2009.
+
+The linear regression fit, which having a slope lower than 1, only shows that when comparing two average values from 2003 to 2009 there is a decrease in value; it does not suggest that prices are lower. In fact, this linear model isn't particularly appropriate because the distributions of both the predictor and outcome resemble log-normal distributions, and an assumption of the linear model is that the distribution of the outcomes must be normally distributed. This is not met. Moreover, there does not appear to be constant variance in the residuals since the variance in each observation gets larger as both the predictor and outcome get larger. This means that these data are heteroscedastic and some adjustment to the model must be made.
+
+# Question 4 {-}
+
+```{r question4, include=FALSE}
+```
+
+The `UBSprices` dataset compares the cost of several reference products in terms of labor time from 2003 to 2009. Each data point is a particular comparison within a city across the globe. This measure examine economic pressure on a household regardless of geography and currency.
+
+```{r q4f1, echo=FALSE, out.width="55%", fig.align="center", fig.cap="Comparison of Big Mac cost in labor time in different cities from 2003 to 2009", fig.pos="H"}
+plt_q4f1
+```
+
+Fig. \@ref(fig:q4f1) shows that these data are clustered more towards lower values, implying that most observed cities' economic pressure of a Big Mac is low. However, there are two particularly interesting outliers around $(75, 125)$. These observations could indicate that 2009 had a huge economic downturn for these two cities. 2009 also happens to coincide with the Great Recession, so perhaps these locales were particularly affected by the subprime mortgage crisis.
+
+```{r q4f5, echo=FALSE, fig.cap="Distribution of costs in each year", fig.align="center", fig.subcap=c("2003", "2009"), fig.ncol=2, out.width="45%"}
+```
+
+However, the linear model in Fig. \@ref(fig:q4f1) probably isn't a good choice in this situation. Note that as the cost increases in 2003, the variability increases as well. There is an uneven distribution of observations with a clear tight cluster toward lower 2003 cost values. Moreover, variables like prices of objects tend to be log-normally distributed as shown in Fig. \@ref(fig:q4f5). Thus, it would be more suitable to apply a linear model to the log of both variables.
+
+```{r q4f2, echo=FALSE, out.width="55%", fig.align="center", fig.cap="Log transform of Fig. \\ref{fig:q4f1}", fig.pos="H"}
+plt_q4f2
+```
+
+With the log-log model used in Fig. \@ref(fig:q4f2), the linear fit becomes much more stable: the tail uncertainties look roughly the same, the distribution of observations look roughly even, and there's no apparent clustering of observations. Furthermore, Fig. \@ref(fig:q4f3) shows that the distribution of the residuals for the log-log model looks to be normally distributed about zero, which is what we expect. Notice that the model with the untransformed data does not have normally distributed residuals about zero, a clear indication that the model is not the best fit.
+
+```{r q4f3, echo=FALSE, out.width="55%", fig.align="center", fig.cap="Comparison of the (scaled) residuals of the two models"}
+plt_q4f3
+```
+
 
