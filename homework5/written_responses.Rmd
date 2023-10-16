@@ -1,0 +1,104 @@
+---
+title: "Homework 5"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: "../preamble.tex"
+    toc: false
+    extra_dependencies: "float"
+---
+
+```{r setup1, include=FALSE, cache=FALSE}
+knitr::read_chunk(here::here("homework5/analysis.R"))
+
+# Allowing code chunk crossreferences
+# https://stackoverflow.com/questions/50702942/does-rmarkdown-allow-captions-and-references-for-code-chunks
+old_source <- knitr::knit_hooks$get("source")
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- old_source(x, options)
+
+  if (!is.null(options$code.cap)) {
+    x <- paste0("\\label{", options$label, "}", x)
+    x <- paste0("\\captionof{chunk}{", options$code.cap, "}", x)
+  }
+
+  x
+})
+```
+
+```{r preamble, include=FALSE}
+```
+
+# Question 1 {-}
+
+```{r question1, include=FALSE}
+```
+
+```{r q1t1, echo=FALSE}
+sims |>
+  tidytable::slice_sample(6) |>
+  kableExtra::kable(
+    caption = "Sample of simulation rounds",
+    booktabs = TRUE,
+    digits = 2
+  ) |>
+  kableExtra::kable_styling(position = "center")
+```
+
+Tab. \@ref(tab:q1t1) shows a sample of the results of each simulation round. Tab. \@ref(tab:q1t2) shows that the confidence intervals for both the intercept $a$ and the slope $b$ contain the true parameter values approximately 95% of the time. It also shows the average estimate of $\sigma$ which contains the true $\sigma$ within 1 standard error (although the rounded estimate is exactly 5).
+
+```{r q1t2, echo=FALSE}
+q1_summary |>
+  tidytable::rename(
+    "$\\hat{a}$" = est_a,
+    "$s_a$" = se_a,
+    "Proportion $a$ in $CI_{95}$" = a_in_95,
+    "$\\hat{b}$" = est_b,
+    "$s_b$" = se_b,
+    "Proportion $b$ in $CI_{95}$" = b_in_95,
+    "$\\hat{\\sigma}$" = est_sigma,
+  ) |>
+  kableExtra::kable(
+    digits = 2,
+    caption = "Summary of simulation",
+    booktabs = TRUE,
+    escape = FALSE
+  ) |>
+  kableExtra::kable_styling(position = "center")
+```
+
+What is a little striking is that the standard errors $s_a$ are so large (at the same order as the estimated value $\hat{a}$ itself). However, considering that the simulated data $x$ were uniformly distributed between 0 and 20 and that the OLS routine will "center" the line at the mean of the data, the region with minimal uncertainty would be closest to $x=10$ and the regions with maximal uncertainty would be the bounds of the domain of $x$: $\{0, 20\}$. Since the intercept is at $x=0$, it seems logical that the standard error is large, especially compared to $s_b$.
+
+# Question 2 {-}
+
+The estimate of the intercept is **negatively correlated** with the estimate of the slope. Consider the geometry of a line: suppose we have a line in the first quadrant of the $x$-$y$ plane. As the slope increases, the intercept gets lower and lower to compensate.
+
+Analytically, the relation of the intercept to slope is given as
+
+$$
+\hat{a}_{\mathrm{ols}} = \bar{y} - \hat{b}_{\mathrm{ols}}\bar{x}
+$$
+
+Assume, without loss of generality^[A coordinate transformation is always applicable], that $\bar{y}=0$:
+
+$$
+\hat{a}_{\mathrm{ols}} = -\hat{b}_{\mathrm{ols}}\bar{x}
+$$
+
+Clearly with negative sign the OLS estimate of the slope is negatively correlated with the OLS estimate of the intercept.
+
+# Question 3 {-}
+
+```{r question3, echo=FALSE}
+```
+
+```{r q3f1, echo=FALSE, fig.align="center", out.width="55%"}
+q3_plt
+```
+
+
+# Question 4 {-}

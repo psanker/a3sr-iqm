@@ -22,7 +22,7 @@
     },
     "MASS": {
       "Package": "MASS",
-      "Version": "7.3-57",
+      "Version": "7.3-60",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -33,7 +33,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "71476c1d88d1ebdf31580e5a257d5d31"
+      "Hash": "a56a6365b3fa73293ea8d084be0d9bb0"
     },
     "Matrix": {
       "Package": "Matrix",
@@ -221,7 +221,7 @@
     },
     "boot": {
       "Package": "boot",
-      "Version": "1.3-28",
+      "Version": "1.3-28.1",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -229,7 +229,7 @@
         "graphics",
         "stats"
       ],
-      "Hash": "0baa960e3b49c6176a4f42addcbacc59"
+      "Hash": "9a052fbcbe97a98ceb18dbfd30ebd96e"
     },
     "brio": {
       "Package": "brio",
@@ -800,7 +800,7 @@
     },
     "lattice": {
       "Package": "lattice",
-      "Version": "0.20-45",
+      "Version": "0.21-9",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -811,7 +811,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "b64cdbb2b340437c4ee047a1f4c4377b"
+      "Hash": "5558c61e0136e247252f5f952cdaad6a"
     },
     "lifecycle": {
       "Package": "lifecycle",
@@ -875,7 +875,7 @@
     },
     "mgcv": {
       "Package": "mgcv",
-      "Version": "1.8-40",
+      "Version": "1.9-0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -888,7 +888,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "c6b2fdb18cf68ab613bd564363e1ba0d"
+      "Hash": "086028ca0460d0c368028d3bda58f31b"
     },
     "mime": {
       "Package": "mime",
@@ -935,7 +935,7 @@
     },
     "nlme": {
       "Package": "nlme",
-      "Version": "3.1-157",
+      "Version": "3.1-163",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -945,7 +945,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "dbca60742be0c9eddc5205e5c7ca1f44"
+      "Hash": "8d1938040a05566f4f7a14af4feadd6b"
     },
     "nloptr": {
       "Package": "nloptr",
@@ -959,7 +959,7 @@
     },
     "nnet": {
       "Package": "nnet",
-      "Version": "7.3-17",
+      "Version": "7.3-19",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -967,7 +967,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "cb1d8d9f300a7e536b89c8a88c53f610"
+      "Hash": "2c797b46eea7fb58ede195bc0b1f1138"
     },
     "numDeriv": {
       "Package": "numDeriv",
@@ -1360,7 +1360,7 @@
     },
     "survival": {
       "Package": "survival",
-      "Version": "3.3-1",
+      "Version": "3.5-7",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -1372,7 +1372,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "f6189c70451d3d68e0d571235576e833"
+      "Hash": "b8e943d262c3da0b0febd3e04517c197"
     },
     "svglite": {
       "Package": "svglite",
