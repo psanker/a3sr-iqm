@@ -27,6 +27,20 @@ report_uncertainty <- function(x, digits = 2, use_se_mean = TRUE) {
   )
 }
 
+report_interval <- function(ci, digits = 2, use_sci_notation = FALSE) {
+  stopifnot(length(ci) == 2)
+
+  format <- if (isTRUE(use_sci_notation)) "E" else "f"
+
+  paste0(
+    "$[",
+    formatC(ci[[1]], digits = digits, format = format),
+    ",~",
+    formatC(ci[[2]], digits = digits, format = format),
+    "]$"
+  )
+}
+
 std_errs <- function(mod) {
   summary(mod)$coefficients[, 2]
 }
@@ -126,3 +140,73 @@ q3_plt <- ggplot2::ggplot(
     y = "Daughter's height (in)",
   ) +
   ggplot2::theme_bw()
+
+q3_est <- tidytable::tidytable(
+  est_a = coef(q3_mod)[[1]],
+  se_a = std_errs(q3_mod)[[1]],
+  est_b = coef(q3_mod)[[2]],
+  se_b = std_errs(q3_mod)[[2]],
+  est_sigma = summary(q3_mod)[["sigma"]],
+)
+
+# ---- question3-2 ----
+ci_a <- q3_est$est_a + qnorm(c(0.005, 0.995)) * q3_est$se_a
+ci_b <- q3_est$est_b + qnorm(c(0.005, 0.995)) * q3_est$se_b
+
+# Equivalent to \hat{a} + \hat{b}*64,
+# but I wanted to try using the general R predict() func
+pred_64 <- predict(q3_mod, tidytable::tidytable(mheight = 64))
+
+# ---- question4a ----
+
+# ---- question4b ----
+
+b_ols <- function(x, y) {
+  stopifnot(length(x) == length(y))
+
+  x_bar <- mean(x)
+  y_bar <- mean(y)
+
+  x <- x - x_bar
+  y <- y - y_bar
+
+  (t(x) %*% y) / (t(x) %*% x)
+}
+
+b_alt <- function(x, y) {
+  stopifnot(length(x) == length(y))
+
+  x_bar <- mean(x)
+  y_bar <- mean(y)
+
+  x <- x - x_bar
+  y <- y - y_bar
+
+  mean(y / x)
+}
+
+sims <- lapply(seq_len(1000), function(i_sim,
+                                       a = 2,
+                                       b = 1,
+                                       sigma = 2.5) {
+  x <- runif(100, min = 0, max = 20)
+  y <- a + (b * x) + rnorm(100, mean = 0, sd = sigma)
+
+  est_b_ols <- b_ols(x, y)
+  est_b_alt <- b_alt(x, y)
+
+  tidytable::tidytable(
+    ols = est_b_ols,
+    alt = est_b_alt,
+  )
+}) |>
+  data.table::rbindlist()
+
+ols_estimator_list <- sims$ols
+alt_estimator_list <- sims$alt
+
+sims_summary <- sims |>
+  tidytable::summarise(
+    b_ols = report_uncertainty(ols, use_se_mean = FALSE),
+    b_alt = report_uncertainty(alt, use_se_mean = FALSE),
+  )
