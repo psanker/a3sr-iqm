@@ -1183,13 +1183,10 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "1.0.2",
-      "Source": "Repository",
+      "Version": "1.0.3",
+      "OS_type": null,
       "Repository": "CRAN",
-      "Requirements": [
-        "utils"
-      ],
-      "Hash": "4b22ac016fe54028b88d0c68badbd061"
+      "Source": "Repository"
     },
     "rlang": {
       "Package": "rlang",
@@ -1264,17 +1261,8 @@
     },
     "sass": {
       "Package": "sass",
-      "Version": "0.4.5",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R6",
-        "fs",
-        "htmltools",
-        "rappdirs",
-        "rlang"
-      ],
-      "Hash": "2bb4371a4c80115518261866eab6ab11"
+      "Version": "0.4.7",
+      "Source": "Repository"
     },
     "scales": {
       "Package": "scales",

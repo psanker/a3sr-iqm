@@ -1,7 +1,7 @@
 {
   "bioconductor.version": null,
-  "external.libraries": ["~/.local/share/nvimcom"],
-  "ignored.packages": [],
+  "external.libraries": ["~/.local/share/renv-ext"],
+  "ignored.packages": ["nvimcom"],
   "package.dependency.fields": [
     "Imports",
     "Depends",
