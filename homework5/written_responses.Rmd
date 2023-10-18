@@ -1,0 +1,197 @@
+---
+title: "Homework 5"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: "../preamble.tex"
+    toc: false
+    extra_dependencies: "float"
+---
+
+```{r setup1, include=FALSE, cache=FALSE}
+knitr::read_chunk(here::here("homework5/analysis.R"))
+
+# Allowing code chunk crossreferences
+# https://stackoverflow.com/questions/50702942/does-rmarkdown-allow-captions-and-references-for-code-chunks
+old_source <- knitr::knit_hooks$get("source")
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- old_source(x, options)
+
+  if (!is.null(options$code.cap)) {
+    x <- paste0("\\label{", options$label, "}", x)
+    x <- paste0("\\captionof{chunk}{", options$code.cap, "}", x)
+  }
+
+  x
+})
+```
+
+```{r preamble, include=FALSE}
+```
+
+# Question 1 {-}
+
+```{r question1, include=FALSE}
+```
+
+```{r q1t1, echo=FALSE, fig.pos="H"}
+sims |>
+  tidytable::slice_sample(6) |>
+  kableExtra::kable(
+    caption = "Sample of simulation rounds",
+    booktabs = TRUE,
+    digits = 2
+  ) |>
+  kableExtra::kable_styling(
+    position = "center",
+    latex_options = "hold_position"
+  )
+```
+
+Tab. \@ref(tab:q1t1) shows a sample of the results of each simulation round. Tab. \@ref(tab:q1t2) shows that the confidence intervals for both the intercept $a$ and the slope $b$ contain the true parameter values approximately 95% of the time. It also shows the average estimate of $\sigma$ which contains the true $\sigma$ within 1 standard error (although the rounded estimate is exactly 5).
+
+```{r q1t2, echo=FALSE, fig.pos="H"}
+q1_summary |>
+  tidytable::rename(
+    "$\\hat{a}$" = est_a,
+    "$s_a$" = se_a,
+    "Proportion $a$ in $CI_{95}$" = a_in_95,
+    "$\\hat{b}$" = est_b,
+    "$s_b$" = se_b,
+    "Proportion $b$ in $CI_{95}$" = b_in_95,
+    "$\\hat{\\sigma}$" = est_sigma,
+  ) |>
+  kableExtra::kable(
+    digits = 2,
+    caption = "Summary of simulation",
+    booktabs = TRUE,
+    escape = FALSE
+  ) |>
+  kableExtra::kable_styling(
+    position = "center",
+    latex_options = "hold_position"
+  )
+```
+
+What is a little striking is that the standard errors $s_a$ are so large (at the same order as the estimated value $\hat{a}$ itself). However, considering that the simulated data $x$ were uniformly distributed between 0 and 20 and that the OLS routine will "center" the line at the mean of the data, the region with minimal uncertainty would be closest to $x=10$ and the regions with maximal uncertainty would be the bounds of the domain of $x$: $\{0, 20\}$. Since the intercept is at $x=0$, it seems logical that the standard error is large, especially compared to $s_b$.
+
+# Question 2 {-}
+
+The estimate of the intercept is **negatively correlated** with the estimate of the slope. Consider the geometry of a line: suppose we have a line in the first quadrant of the $x$-$y$ plane. As the slope increases, the intercept gets lower and lower to compensate.
+
+Analytically, the relation of the intercept to slope is given as
+
+$$
+\hat{a}_{\mathrm{ols}} = \bar{y} - \hat{b}_{\mathrm{ols}}\bar{x}
+$$
+
+Assume, without loss of generality^[A coordinate transformation is always applicable. See 4(a).], that $\bar{y}=0$:
+
+$$
+\hat{a}_{\mathrm{ols}} = -\hat{b}_{\mathrm{ols}}\bar{x}
+$$
+
+Clearly with negative sign the OLS estimate of the slope is negatively correlated with the OLS estimate of the intercept.
+
+# Question 3 {-}
+
+```{r question3, echo=FALSE}
+```
+
+## Part 1 {-}
+
+```{r q3f1, echo=FALSE, fig.align="center", out.width="55%", fig.cap="Inspection of daughters' heights compared to mothers' heights"}
+q3_plt
+```
+
+```{r q3t1, echo=FALSE}
+q3_est |>
+  tidytable::rename(
+    "$\\hat{a}$" = est_a,
+    "$s_{a}$" = se_a,
+    "$\\hat{b}$" = est_b,
+    "$s_{b}$" = se_b,
+    "$\\hat{\\sigma}$" = est_sigma,
+  ) |>
+  kableExtra::kable(
+    booktabs = TRUE,
+    digits = 2,
+    caption = "Model summary of regressing daughters' heights on mothers' heights",
+    escape = FALSE
+  ) |>
+  kableExtra::kable_styling(
+    position = "center",
+    latex_options = "hold_position"
+  )
+```
+
+Tab. \@ref(tab:q3t1) shows the model estimates and standard errors. Like in Q1, the uncertainty in the intercept is a couple orders of magnitude higher than the uncertainty in the slope.
+
+## Parts 2 \& 3 {-}
+
+```{r question3-2, echo=FALSE}
+```
+
+From the model fit, the $CI_{99}$ for $a$ is `r report_interval(ci_a)`, and the $CI_{99}$ for $b$ is `r report_interval(ci_b)`. In the frequentist view, these intervals state that, in the long run, 99% of observations should include the true values for the intercept and slope.
+
+Using this model, we can predict that a mother with a height of 64 inches is expected to have a daughter around `r round(pred_64, 2)` inches, which is line with what Fig. \@ref(fig:q3f1) shows.
+
+# Question 4 {-}
+
+## Part (a) {-}
+
+The authors have effectively chosen a coordinate transformation of $y$ that sets $\bar{y} = 0$. However, the covariance is invariant under a Euclidean coordinate transformation.
+
+Let $x^\prime = x - x_0$ and $y^\prime = y - y_0$. We need to show $\mathrm{cov}(x^\prime, y^\prime) = \mathrm{cov}(x, y)$:
+
+\begin{align*}
+\mathrm{cov}(x^\prime, y^\prime) &= \left<(x^\prime - \left<x^\prime\right>)(y^\prime - \left<y^\prime\right>)\right> \\
+&= \left<x^\prime y^\prime - x^\prime\left<y^\prime\right> - \left<x^\prime\right>y^\prime + \left<x^\prime\right>\left<y^\prime\right>\right>
+\end{align*}
+
+Since the expected value of a constant is the constant itself, we can expand these terms and examine the constant contents:
+
+\begin{align*}
+x^\prime y^\prime &= (x - x_0)(y - y_0)
+&= xy - xy_0 - x_0 y + x_0 y_0 \\
+x^\prime \left<y^\prime\right> &= (x - x_0)(\left<y\right> - y_0)
+&= x\left<y\right> - xy_0 - x_0\left<y\right> + x_0 y_0 \\
+\left<x^\prime\right> y^\prime &= (\left<x\right> - x_0)(y - y_0)
+&= \left<x\right>y - \left<x\right>y_0 - x_0 y + x_0 y_0 \\
+\left<x^\prime\right> \left<y^\prime\right> &= (\left<x\right> - x_0)(\left<y\right> - y_0)
+&= \left<x\right>\left<y\right> - \left<x\right>y_0 - x_0\left<y\right> + x_0 y_0 
+\end{align*}
+
+Collecting terms together, we are left with:
+
+\begin{align*}
+\mathrm{cov}(x^\prime, y^\prime) &= \left<xy - x\left<y\right> - \left<x\right>y + \left<x\right>\left<y\right>\right> \\
+&= \left<(x - \left<x\right>)(y - \left<y\right>)\right> \\
+&= \mathrm{cov}(x, y)
+\end{align*}
+
+Thus, $\hat{b}_{\mathrm{ols}}$ and $\hat{b}$ are equivalent. $\Box$
+
+## Part (b) {-}
+
+```{r question4b, include=FALSE}
+```
+
+```{r q4t1, echo=FALSE}
+sims_summary |>
+  tidytable::rename(
+    "$\\hat{b}_{\\mathrm{ols}}$" = b_ols,
+    "$\\hat{b}_{\\mathrm{alt}}$" = b_alt,
+  ) |>
+  kableExtra::kable(
+    escape = FALSE,
+    caption = "Comparison of OLS versus Alternative estimators",
+    booktabs = TRUE
+  )
+```
+
+While certainly more uncertain than the OLS estimator, the mean slope approach does approximately match the OLS estimator (which in turn closely matches $b=1$). The wide uncertainty most likely comes from the reality that without the process of taking a root-mean-square, which restricts the domain of differences to positive values, the domain of potential slopes gets significantly wider.
