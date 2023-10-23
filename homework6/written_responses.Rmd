@@ -1,0 +1,116 @@
+---
+title: "Homework 6"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: "../preamble.tex"
+    toc: false
+    extra_dependencies: "float"
+---
+
+```{r setup1, include=FALSE, cache=FALSE}
+knitr::read_chunk(here::here("homework6/analysis.R"))
+
+# Allowing code chunk crossreferences
+# https://stackoverflow.com/questions/50702942/does-rmarkdown-allow-captions-and-references-for-code-chunks
+old_source <- knitr::knit_hooks$get("source")
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- old_source(x, options)
+
+  if (!is.null(options$code.cap)) {
+    x <- paste0("\\label{", options$label, "}", x)
+    x <- paste0("\\captionof{chunk}{", options$code.cap, "}", x)
+  }
+
+  x
+})
+```
+
+```{r preamble, include=FALSE}
+```
+
+# Question 1 {-}
+
+```{r question1, echo=FALSE}
+```
+
+See `anaysis.R` for the full code details, but this simulation study shows that `r 100 * q1_prop_in`\% of $y_{\mathrm{new}}$ values were in the prediction intervals (expecting a coverage level of 95\%).
+
+# Question 2 {-}
+
+```{r question2, include=FALSE}
+```
+
+```{r, echo=FALSE, fig.cap="Original plot from Problem 1.1.3 with linear fit", fig.align="center", out.width="55%"}
+plt_q2f1
+```
+
+For a locality with per-capita GDP of \$1,000 (as of 2012), the 95% prediction interval for fertility is between `r round(exp_pi_q2[1], 2)` and `r round(exp_pi_q2[2], 2)` children. Note that since this model was conducted on a log scale, the interval itself is not uniform (there is a higher probability density on the lower part of the interval than the upper).
+
+```{r q2t1, echo=FALSE}
+kableExtra::kable(
+  q2_t1,
+  booktabs = TRUE,
+  caption = "Countries with the lowest and highest fertility rates"
+) |>
+  kableExtra::kable_styling(
+    latex_options = "hold_position"
+  )
+```
+
+Tab. \@ref(tab:q2t1) shows the countries with the lowest and highest fertility rates, while Tab. \@ref(tab:q2t2) shows the countries with the highest absolute residual values. Interestingly, Bosnia and Herzegovina show up in both tables, which indicates that it is a very strong outlier among these data.
+
+```{r q2t2, echo=FALSE}
+kableExtra::kable(
+  q2_t2,
+  booktabs = TRUE,
+  caption = "Countries with the lowest and largest residuals in the log-log model fit",
+  digits = 2
+) |>
+  kableExtra::kable_styling(
+    latex_options = "hold_position"
+  )
+```
+
+# Question 3 {-}
+
+```{r question3, include=FALSE}
+```
+
+```{r q3f1, echo=FALSE, fig.cap="Examining eruption interval to eruption duration", fig.align="center", out.width="55%"}
+plt_q3f1
+```
+
+Fig. \@ref(fig:q3f1) shows the eruption interval compared to duration of Old Faithful. There are two clusters prominent in the scatterplot, indicating that there might be something else at play than a simple regression of the interval and the duration can explain. However, a simple linear model might be good enough for predicting times for visitors.
+
+A simple linear model fit produces estimates of $\hat{a} = `r round(coef(mod_q3)[[1]], 2)`\pm`r round(std_errs(mod_q3)[[1]], 2)` \mathrm{min}$ and $\hat{b} = `r round(coef(mod_q3)[[2]])`\pm`r round(std_errs(mod_q3)[[2]], 2)`$. For a park ranger, she can tell visitors that on average for each extra minute of eruption duration they can expect to wait another 11 minutes until the next eruption.
+
+If a visitor arrives after an eruption of $250s = `r round(250/60, 2)`\mathrm{min}$, an associated prediction interval for the wait time is $[`r round(pi_q3[[2]], 2)`,~`r round(pi_q3[[3]], 2)`]\mathrm{min}$. This interval does *not* imply that there's a 95\% chance that the actual duration will be enclosed in the interval as there is not a probability model associated with this interval. Instead, this 95\% figure means that the interval is constructed in such a way that if one were to repeat this procedure (fit model, estimate prediction interval for new value, then observe new value) many, many times, about 95\% of the intervals would contain the newly observed data.
+
+# Question 4 {-}
+
+```{r question4, include=FALSE}
+```
+
+```{r q4f1, echo=FALSE, out.width="55%", fig.align="center", fig.cap="Inspection of all variables at play in this problem", fig.pos="H"}
+# Ugh
+options(scipen = 999)
+
+plt_q4f1
+```
+
+## Part 1 {-}
+
+Regressing `salary ~ sex`, the estimated coefficients are $\hat{a} = `r round(coef(mod_q4_1)[[1]], 0)`\pm`r round(std_errs(mod_q4_1)[[1]], 0)`$ USD and $\hat{b} = `r round(coef(mod_q4_1)[[2]], 0)`\pm`r round(std_errs(mod_q4_1)[[2]], 0)`$ USD. $\hat{a}$ shows the average salary for male faculty with a comparatively narrow uncertainty. Meanwhile, $\hat{b}$ shows the average *difference* in salaries in women from men. Note, however, the wider uncertainty which is at the same order of magnitude of the estimate. An approximate 95\% confidence interval for this difference is $[`r round(coef(mod_q4_1)[[2]] - 1.96 * std_errs(mod_q4_1)[[2]], 2)`,~`r round(coef(mod_q4_1)[[2]] + 1.96 * std_errs(mod_q4_1)[[2]], 2)`]$ USD.
+
+## Part 2 {-}
+
+Regressing `salary ~ sex + year`, the estimated coefficients are $\hat{a} = `r report_model_elt(mod_q4_2, 1, escape = FALSE)`$, $\hat{b}_{\mathrm{female}} = `r report_model_elt(mod_q4_2, 2, escape = FALSE)`$, and $\hat{b}_{\mathrm{year}} = `r report_model_elt(mod_q4_2, 3, escape = FALSE)`$. $\hat{b}_{\mathrm{female}}$ represents the partial component where, if everything else is held *constant*, salary compares with gender grouping. Compared to part 1, this value is positive! However, this is only because years of experience is **not** marginalized over, as it was in part 1. In essence, this blends the information of two different groups into one group. Moreover, if you examine the breakdown of male observations to female observations, you'll still notice a positive trend within each cohort, but the average difference between cohorts will still be negative. Fig. \@ref(fig:q4f1) shows this breakdown. Finally, $\hat{b}_{\mathrm{year}}$ shows, if everything else were held constant, the average change a 1 year increase of experience would appear in salary.
+
+## Part 3 {-}
+
+Doing a cross-comparison of residuals of the individual models `(salary ~ years) ~ (sex ~ years)`, we get a $\hat{b} = `r report_model_elt(mod_q4_3c, 2, escape = FALSE)`$. This is nearly exactly the value found for $\hat{b}_{\mathrm{female}}$ for part 2, save for the uncertainty value.
