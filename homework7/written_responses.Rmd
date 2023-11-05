@@ -1,0 +1,154 @@
+---
+title: "Homework 7"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: "../preamble.tex"
+    toc: false
+    extra_dependencies: "float"
+    number_sections: false
+---
+
+```{r setup1, include=FALSE, cache=FALSE}
+knitr::read_chunk(here::here("homework7/analysis.R"))
+
+# Allowing code chunk crossreferences
+# https://stackoverflow.com/questions/50702942/does-rmarkdown-allow-captions-and-references-for-code-chunks
+old_source <- knitr::knit_hooks$get("source")
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- old_source(x, options)
+
+  if (!is.null(options$code.cap)) {
+    x <- paste0("\\label{", options$label, "}", x)
+    x <- paste0("\\captionof{chunk}{", options$code.cap, "}", x)
+  }
+
+  x
+})
+```
+
+```{r preamble, include=FALSE}
+```
+
+# Question 1
+
+```{r question1, include=FALSE}
+```
+
+```{r q1f1, echo=FALSE, fig.cap="Scatterplot of $x$ vs. $y$. Dots are where $z=0$, and circles are where $z=1$", fig.align="center", out.width="55%"}
+plt_q1f1
+```
+
+For the following two plots, I elected to use color instead of shape to distinguish the relevance of each line. I find that this visual distinction is much clearer, especially when combining multiple kinds of geometries. This choice also had the side-effect of making the code simpler to write!
+
+```{r q1f2, echo=FALSE, fig.cap="Varying intercept model of $y\\sim x + z$", fig.align="center", out.width="55%", fig.pos="H"}
+plt_q1f2
+```
+
+```{r q1f3, echo=FALSE, fig.cap="Varying slope \\textbf{and} intercept model of $y\\sim x * z$", fig.align="center", out.width="55%"}
+plt_q1f3
+```
+
+# Question 2
+
+Assuming $z = 1$ is the treatment group, the estimated regression line can be expressed as
+
+$$
+y_T = (3.9\pm `r round(sqrt(0.2^2 + 0.3^2), 1)`) + (2.3\pm `r round(sqrt(0.4^2 + 0.5^2), 1)`)x
+$$
+
+whereas the control group can be written as
+
+$$
+y_C = (1.2\pm 0.2) + (1.6\pm 0.4)x
+$$
+
+```{r, echo=FALSE, fig.align="center", fig.cap="Sketch of two lines", out.width="55%"}
+knitr::include_graphics(here::here("homework7/q2_p1.jpg"))
+```
+
+# Question 3
+
+```{r question3, include=FALSE}
+```
+
+```{r q3t1, echo=FALSE}
+kableExtra::kable(
+  tab_q1,
+  caption = "Comparison of estimated model coefficients",
+  booktabs = TRUE,
+  escape = FALSE
+) |>
+  kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+It is clear that the use of index variables can yield differing values with the same model. Interpretation is clearer with the "base" model, but the same meaning can be reconstructed by reporting the index values as well.
+
+# Question 4
+
+The model
+
+\begin{align*}
+y &= \beta_0 + x_1\beta_1 + x_2\beta_2 + x_3\beta_3 + x_4\beta_4 + x_5\beta_5 \\
+&= \beta_0 + x_G\beta_G + x_I\beta_I + x_L\beta_L + x_{G:I}\beta_{G:I} + x_{G:L}\beta_{G:L}
+\end{align*}
+
+permits two submodels:
+
+\begin{align*}
+y_{HS} &= \beta_0 + x_G\beta_G + x_I\beta_I + x_{G:I}\beta_{G:I} \\
+y_C &= (\beta_0 + \beta_L) + x_G(\beta_G + \beta_{G:L}) + x_I\beta_I + x_{G:I}\beta_{G:I} \\
+\end{align*}
+
+Comparing the two models and adding in the values for each $\beta$,
+
+$$
+y_C - y_{HS} = 35 - 10x_G
+$$
+
+This implies, for **(a)**, that **(iii)** is correct since there is a point (when GPA = 3.5), comparing a college graduate and non-college graduate with the same IQ and GPA, when the non-college graduate is expected to have a higher starting salary when their GPAs are high enough.
+
+```{r question4, include=FALSE}
+```
+
+With this model, a college graduate with IQ 110 and GPA 4.0 is predicted to have an expected starting salary of \$`r formatC(predict_q4(gpa = 4.0, iq = 110) * 1000, format = "f", digits = 0)`.
+
+# Question 5
+
+```{r question5, include=FALSE}
+```
+
+```{r q5f1, echo=FALSE, fig.cap="Comparing PPV test scores to mother's age at time of birth. Note that the data have been jittered to help with overplotting.", fig.align="center", out.width="55%"}
+plt_q5f1
+```
+
+Fig. \@ref(fig:q5f1) shows the regression of `ppvt ~ momage`, which has a $\beta_{\mathrm{age}} = `r report_model_elt(mod_q5_1, 2, escape = FALSE)`$. This estimate shows that, on average, if you were to compare two children whose mothers were separated by one year at time of birth, then the child with the older mother is expected to have a PPV score 0.84 points higher. If this model is true, then, on average, women who have children later in life are expected to have children that achieve higher cognition scores. However, this recommendation ignores any potential other factors as it assumes that the PPV test score is purely a function of the mother's age at birth.
+
+```{r q5f2, echo=FALSE, fig.cap="Adding mother's education level into the model", fig.align="center", out.width="65%", fig.pos="H"}
+plt_q5f2
+```
+
+Using a varying intercept model with `educ_cat` as an index variable (Fig. \@ref(fig:q5f2)), the estimates of the slope coefficients are $\beta_{\mathrm{age}} = `r report_model_elt(mod_q5_2, 2, escape = FALSE)`$ and $\beta_{\mathrm{educ}} = `r report_model_elt(mod_q5_2, 3, escape = FALSE)`$. $\beta_{\mathrm{age}}$ shows that for two women who are identical in everything except separated by 1 year at the time of their children's births, one would expect the older woman's child to have scored `r round(coef(mod_q5_2)[[2]], 2)` points higher than the other child. Similarly, $\beta_{\mathrm{educ}}$ shows that for two women who are identical in everything except differ by one education level, one would expect the more educated woman's child to have scored `r round(coef(mod_q5_2)[[3]], 2)` points higher than the other child.
+
+```{r q5f3, echo=FALSE, out.width="65%", fig.align="center", fig.cap="Inspecting the interaction of completing high school with the mother's age"}
+plt_q5f3
+```
+
+Fig. \@ref(fig:q5f3) shows that the interaction of mother's age and high school completion status introduces a negative slope for the non-high-school cohort. After fitting `ppvt ~ momage * did_hs`, we have two lines, one for each cohort:
+
+\begin{align*}
+y_{\text{No HS}} &= `r round(coef(mod_q5_3)[[1]], 2)` `r round(coef(mod_q5_3)[[2]], 2)` x_{\mathrm{age}} \\
+y_{\text{HS}} &= `r round(coef(mod_q5_3)[[1]] + coef(mod_q5_3)[[3]], 2)` + `r round(coef(mod_q5_3)[[2]] + coef(mod_q5_3)[[4]], 2)` x_{\mathrm{age}}
+\end{align*}
+
+Unlike the previous models, the interaction term creates a situation where for two women who both did not complete high school and are identical in everything except separated by 1 year at the time of their children's births, the older woman's child is expected to score `r abs(round(coef(mod_q5_3)[[2]], 2))` points **less** than the child of the younger woman.
+
+```{r q5f4, echo=FALSE, out.width="55%", fig.cap="Prediction of PPV scores from $\\text{ppvt}\\sim \\text{momage}$ model", warning=FALSE}
+plt_q5f4
+```
+
+Finally, \@ref(fig:q5f4) clearly highlights how poor of a predictive model `ppvt ~ momage` really is. If it were a good model, we'd expect the points to be along the `y = x` line. Instead, it's pretty flat.
