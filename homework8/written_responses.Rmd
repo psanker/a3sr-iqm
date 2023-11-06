@@ -1,0 +1,165 @@
+---
+title: "Homework 8"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: "../preamble.tex"
+    toc: false
+    extra_dependencies: "float"
+    number_sections: false
+---
+
+```{r setup1, include=FALSE, cache=FALSE}
+knitr::read_chunk(here::here("homework8/analysis.R"))
+
+# Allowing code chunk crossreferences
+# https://stackoverflow.com/questions/50702942/does-rmarkdown-allow-captions-and-references-for-code-chunks
+old_source <- knitr::knit_hooks$get("source")
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- old_source(x, options)
+
+  if (!is.null(options$code.cap)) {
+    x <- paste0("\\label{", options$label, "}", x)
+    x <- paste0("\\captionof{chunk}{", options$code.cap, "}", x)
+  }
+
+  x
+})
+```
+
+```{r preamble, include=FALSE}
+```
+
+# Question 1
+
+```{r question1, include=FALSE}
+```
+
+```{r q1t1, echo=FALSE}
+kableExtra::kable(
+  tab_q1t1,
+  escape = FALSE,
+  booktabs = TRUE,
+  digits = 2,
+  caption = "Validation scheme results"
+) |>
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+See `analysis.R` for the code that conducted the validation in Tab. \@ref(tab:q1t1).
+
+# Question 2
+
+```{r question2, include=FALSE}
+```
+
+```{r q2t1, echo=FALSE}
+tidytable::tidytable(
+  "Data generating process" = c("Static mean", "Random mean"),
+  "Between school" = c(cor_q2_a1, cor_q2_a2),
+  "Within school" = c(cor_q2_b1, cor_q2_b2),
+) |>
+  kableExtra::kable(
+    caption = "Comparison of student correlation with differing data generation processes",
+    booktabs = TRUE,
+    digits = 3,
+  ) |>
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+See `analysis.R` for the code that conducted the validation in Tab. \@ref(tab:q2t1).
+
+# Question 3
+
+```{r question3, include=FALSE}
+```
+
+```{r q3t1, echo=FALSE}
+kableExtra::kable(
+  tab_q3t1,
+  digits = 4,
+  booktabs = TRUE,
+  caption = "Comparing Coefficient of Determination ($R^2$) to Pearson Correlation Coefficient ($r_{xy}$)",
+  escape = FALSE,
+) |>
+  kableExtra::kable_styling(
+    latex_options = "hold_position"
+  )
+```
+
+As shown in Tab. \@ref(tab:q3t1), $r_{xy}$ is roughly 10 times larger than $R^2$. 
+
+```{r q3t2, echo=FALSE}
+kableExtra::kable(
+  tab_q3t2,
+  digits = 4,
+  booktabs = TRUE,
+  caption = "Interaction of work experience and gender",
+  escape = FALSE,
+) |>
+  kableExtra::kable_styling(
+    latex_options = "hold_position"
+  )
+```
+
+Tab. \@ref(tab:q3t2) shows what happens when gender is included in the model. $\beta_w$ shows that when comparing groups of people of the same gender but on average differ by 1 year of experience, the group with the higher experience will, on average, make \$0.08 more per hour for men and \$0.00 for women (when including the interaction term $\beta_{w:f}$). Moreover, when examining groups of men and women who have the same amount of experience, on average the group of women will make \$0.76 less than the group of men; that being said, there is significant uncertainty with this figure, on the same order of magnitude as the estimate.
+
+```{r q3t3, echo=FALSE}
+kableExtra::kable(
+  tab_q3t3,
+  digits = 3,
+  booktabs = TRUE,
+  caption = "Inspection of metrics for $\\text{wages}\\sim\\text{workexp}*\\text{female}$",
+  escape = FALSE,
+) |>
+  kableExtra::kable_styling(
+    latex_options = "hold_position"
+  )
+```
+
+Tab. \@ref(tab:q3t3) shows the metrics associated with $\text{wages}\sim\text{workexp}*\text{female}$, and what's noticeable is that $r_{y\hat{y}}$ is the same as $\sqrt{R^2}$.
+
+It should be noted that $R^2$ is not a particularly good metric for goodness of fit. When computing a model of $\text{wages}\sim\text{workexp} + \prod_{i=1}^9 x_i$ where $x_i$ are variables generated from white noise, the $R^2$ can be as good as `r round(summary(mod_q3_3)$r.square, 2)`. This makes absolutely no sense since white noise has no predictive value. Moreover, this is a structural reality of $R^2$ in a least-squares domain. As OLS minimizes the residual sum of squares, it effectively maximizes $R^2$; thus, when more terms are added, it will at least stay the same if not increase.
+
+# Question 4
+
+```{r q4f1, echo=FALSE, fig.cap="Residual plot with confounded interaction", fig.align="center", out.width="55%"}
+knitr::include_graphics(here::here("homework8/q4.jpg"))
+```
+
+Barb could have potentially seen Fig. \@ref(fig:q4f1), as the interaction term would affect the slopes. Not including the interaction would create this "X" pattern since the model would marginalize over these differences in slopes.
+
+# Question 5
+
+```{r question5, include=FALSE}
+```
+
+```{r q5f1, echo=FALSE, fig.cap="Cross-sectional view of model", fig.align="center", fig.subcap=c("$y$ vs. $x_1$", "$y$ vs. $x_2$"), fig.ncol=2, out.width="45%"}
+plt_q5f1a
+plt_q5f1b
+```
+
+Fig. \@ref(fig:q5f1) shows the `y ~ x1 + x2` fit for the `pyth` data, which frankly does not look that reliable. The $y$ observations are systematically higher than the fitted line, but it should be noted that these points are projections to the $x_1 = 0$ and $x_2 = 0$ planes, respectively. 
+
+```{r q5t1, echo=FALSE}
+kableExtra::kable(
+  tab_q5t1,
+  booktabs = TRUE,
+  escape = FALSE,
+  caption = "Estimates and standard errors for $y\\sim x_1 + x_2$",
+  digits = 2,
+) |>
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+Of the model estimates shown in Tab. \@ref(tab:q5t1), the intercept seems to be the most uncertain for this model. Adding an interaction term would not be useful since both $x_1$ and $x_2$ are continuous; the intercept would coincide with $\{x_1,~x_2\} = 0$, which would make the interaction term also 0 at the origin. The $R^2$ is very close to 1, which implies that most of the possible information in the data has been captured by the model; whether this is true or not should be elucidated in the residual plot.
+
+```{r q5f2, echo=FALSE, fig.cap="Residual plot of $y\\sim x_1 + x_2$", fig.align="center", out.width="55%", fig.pos="H"}
+plt_q5f2
+```
+
+The linear fit in \@ref(fig:q5f2) is exactly at the $y = 0$ line, which is suspicious. These data seem to be artificially created to achieve that residual fit, given how non-uniform the residual points look. I would not trust predictions created by this model.
