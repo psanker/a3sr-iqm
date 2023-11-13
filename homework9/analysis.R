@@ -8,7 +8,7 @@
 # - alr4
 #
 # The assumption is that this file was run inside a
-# folder called "homework6" within an Rproj directory.
+# folder called "homework9" within an Rproj directory.
 # Link to GitHub: <https://github.com/psanker/a3sr-iqm>
 #
 # If you wish to render the associated Rmd, run `renv::restore()`
@@ -123,9 +123,127 @@ line_color2 <- "#027ea5"
 hist_fill <- "#dadada"
 hist_color <- "grey"
 
-# ---- question1 ----
+# ---- question3 ----
 dat_q1 <- data.table::fread(here::here("homework4/earnings.csv")) |>
   tidytable::mutate(
     age10 = age / 10,
     age10_sq = age10^2,
   )
+
+# ---- question5 ----
+dat_q5 <- data.table::fread(here::here("homework9/pollution.csv"))
+
+# mort: Mortality rate
+# hc: Hydrocarbon particulates (guessing this is ~PM2.5)
+# nox: Nitric oxides
+# so2: Sulfur dioxide
+
+plt_q5f1a <- ggplot(
+  dat_q5,
+  aes(x = nox, y = mort),
+) +
+  geom_point(alpha = 0.7) +
+  labs(
+    x = "Nitric oxide level",
+    y = "Mortality rate"
+  ) +
+  theme_bw()
+
+mod_q5_1 <- lm(mort ~ nox, data = dat_q5)
+
+plt_q5f1b <- ggplot(
+  dat_q5 |>
+    augment(mod_q5_1),
+  aes(x = .pred, y = .res),
+) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(formula = y ~ x, method = "lm", color = line_color) +
+  labs(x = "Predicted", y = "Residual") +
+  theme_bw()
+
+mod_q5_2 <- lm(mort ~ log(nox), data = dat_q5)
+
+plt_q5f2a <- ggplot(
+  dat_q5,
+  aes(x = log(nox), y = mort),
+) +
+  geom_point(alpha = 0.7) +
+  labs(
+    x = "log(Nitric oxide level)",
+    y = "Mortality rate"
+  ) +
+  theme_bw()
+
+dat_q5_b1 <- dat_q5 |>
+  augment(mod_q5_2) |>
+  tidytable::mutate(.scale_res = .res / sd(.res))
+
+plt_q5f2b <- ggplot(
+  dat_q5_b1,
+  aes(x = .pred, y = .res),
+) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(formula = y ~ x, method = "lm", color = line_color) +
+  labs(x = "Predicted", y = "Residual") +
+  theme_bw()
+
+mod_q5_3 <- lm(log(mort) ~ log(nox), data = dat_q5)
+
+plt_q5f3a <- ggplot(
+  dat_q5,
+  aes(x = log(nox), y = log(mort)),
+) +
+  geom_point(alpha = 0.7) +
+  labs(
+    x = "log(Nitric oxide level)",
+    y = "log(Mortality rate)"
+  ) +
+  theme_bw()
+
+dat_q5_b2 <- dat_q5 |>
+  tidytable::mutate(
+    .pred = predict(mod_q5_3),
+    .res = log(mort) - .pred,
+    .scale_res = .res / sd(.res),
+  )
+
+plt_q5f3b <- ggplot(
+  dat_q5_b2,
+  aes(x = .pred, y = .res),
+) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(formula = y ~ x, method = "lm", color = line_color) +
+  labs(x = "Predicted", y = "Residual") +
+  theme_bw()
+
+tab_q5t1 <- tidytable::tidytable(
+  Model = "$\\mathrm{mort}\\sim\\log{(\\mathrm{nox})}$",
+  "$\\alpha$" = report_model_elt(mod_q5_2, 1),
+  "$\\beta_N$" = report_model_elt(mod_q5_2, 2),
+)
+
+plt_q5f4 <- ggplot(
+  dat_q5 |>
+    tidytable::summarise(
+      x = c(hc, nox, so2),
+      var = c(
+        rep("hc", length(hc)),
+        rep("nox", length(nox)),
+        rep("so2", length(so2))
+      ),
+    ),
+  aes(x = x),
+) +
+  geom_histogram(color = hist_color, fill = hist_fill) +
+  labs(x = "Pollution rate", y = "Count") +
+  facet_wrap(~var) +
+  theme_bw()
+
+mod_q5_4 <- lm(mort ~ log(hc) + log(nox) + log(so2), data = dat_q5)
+
+tab_q5t2 <- tidytable::tidytable(
+  "$\\alpha$" = report_model_elt(mod_q5_4, 1),
+  "$\\beta_H$" = report_model_elt(mod_q5_4, 2),
+  "$\\beta_N$" = report_model_elt(mod_q5_4, 3),
+  "$\\beta_S$" = report_model_elt(mod_q5_4, 4),
+)
