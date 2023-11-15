@@ -1,5 +1,5 @@
 ---
-title: "Homework 8"
+title: "Homework 9"
 subtitle: "IQM"
 date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
 author: Patrick Anker
@@ -36,23 +36,43 @@ knitr::knit_hooks$set(source = function(x, options) {
 
 # Question 1
 
-<!--TODO: Add sketches-->
+Weights and ages for adults are generally not correlated, as is shown in the first model fit: the slope is very slightly upward.
+
+```{r q1f1, echo=FALSE, fig.align="center", fig.cap="Linear and quadratic fit", out.width="65%"}
+knitr::include_graphics(here::here("homework9/q1.jpeg"))
+```
+
+The sketch includes a pronated quadratic as the highest order term has a negative coefficient. By the second derivative test, the fit would have a local maximum.
 
 # Question 2
 
-The indicator for `age18_29` is excluded because it acts as the reference class for the binned `age` variable.
+The indicator for `age18_29` is excluded because it acts as the reference class for the binned `age` variable. If it were included, OLS would encounter a singular matrix and fail to fit.
 
-<!--TODO: Add sketches-->
+```{r q2f1, echo=FALSE, fig.align="center", fig.cap="Fit with binned levels", out.width="65%", fig.pos="H"}
+knitr::include_graphics(here::here("homework9/q2.jpeg"))
+```
+
+From the model fit, the different levels get shifted up a slight amount, matching the slight slope in **Question 1**.
 
 # Question 3
 
-<!--TODO: Add sketches-->
+```{r q3f1, echo=FALSE, fig.align="center", fig.cap="Fit with binned levels and continuous predictor", out.width="65%", fig.pos="H"}
+knitr::include_graphics(here::here("homework9/q3.jpeg"))
+```
 
-Goddamn, why so much drawing this week, Ravi?
+I chose to sketch the figure this way as it is essentially a combination of **Question 1** and **Question 2**: as people get older they tend to get less flexible, so there ought to be a negative trend. Moreover, the levels are centered on the age bracket's mean, so they should continue downward as well. If there were more noise, I could also see the brackets going upward as the continuous predictor makes the individual slopes downward.
 
 # Question 4
 
-<!--TODO: Add sketches-->
+> _Fill in the blanks: Approximately 68% of the people will have weights within a factor of \_\_\_\_\_ and \_\_\_\_\_ of their predicted values from the regression._
+
+As the fit is on the log scale with a standard error of 0.25, 68% of the people will have weights within a factor of $e^{-0.25}$ and $e^{0.25}$ of their predicted value.
+
+```{r q4f1, echo=FALSE, fig.align="center", fig.cap="Sketch of log-log relation of weight against height", out.width="65%", fig.pos="H"}
+knitr::include_graphics(here::here("homework9/q4.jpeg"))
+```
+
+Note that the intercept for this sketch isn't particularly useful: it's the case where the height of someone is 1 inch. Unless these data are collected with The Borrowers^[https://en.wikipedia.org/wiki/The_Borrowers], the intercept does not mean anything. I tried to make that more distinct by plotting the data points fairly far away from the origin to show the out-of-band nature of the model in that region.
 
 # Question 5
 
@@ -103,11 +123,16 @@ kableExtra::kable(
   tab_q5t2,
   escape = FALSE,
   booktabs = TRUE,
-  caption = "Estimates of coefficients for the model $\\mathrm{mort}\\sim\\log{(\\mathrm{hc})}+\\log{(\\mathrm{nox})}+\\log{(\\mathrm{so2})}$" # nolint
+  caption = "Estimates of coefficients for the model $\\mathrm{mort}\\sim\\log(\\mathrm{hc})+\\log(\\mathrm{nox})+\\log(\\mathrm{so2})$" # nolint
 ) |>
   kableExtra::kable_styling(latex_options = "hold_position")
 ```
 
-<!--TODO: Finish this-->
+```{r q5f5, echo=FALSE, fig.cap="Linear fit of $\\text{mort}\\sim\\log(\\text{pollution variables})$", fig.ncol=3, fig.subcap=c("hc", "nox", "so2"), out.width="32%"}
+plt_q5f5a
+plt_q5f5b
+plt_q5f5c
+```
 
-# Question 6
+As shown Fig. \@ref(fig:q5f5), the linear model fit looks more mechanistic than usual. When no pollution particulates are detected, the predicted mortality rate $\alpha$ is `r report_model_elt(mod_q5_4, 1)` deaths per 100,000. In this model, $\beta_H$ shows that when comparing groups of communities on average having the same nitric oxide and sulfur dioxide levels but differing in hydrocarbon counts by a factor of $e$, the communities with higher hydrocarbon counts are, on average, expected to have `r report_model_elt(mod_q5_4, 2, abs_est = TRUE)` fewer people die per 100,000; $\beta_N$ shows that when comparing groups of communities on average having the same hydrocarbon and sulfur dioxide levels but differing in nitric oxide counts by a factor of $e$, the communities with higher nitric oxide counts are, on average, expected to have `r report_model_elt(mod_q5_4, 3, abs_est = TRUE)` more people die per 100,000; finally, $\beta_S$ shows that when comparing groups of communities on average having the same hydrocarbon and nitric oxide levels but differing in nitric oxide counts by a factor of $e$, the communities with higher sulfur dioxide counts are, on average, expected to have `r report_model_elt(mod_q5_4, 4, abs_est = TRUE)` more people die per 100,000. It is very important to note that this model says absolutely causally about relationships among the variables; the fit is purely empirical.
+

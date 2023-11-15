@@ -42,13 +42,19 @@ report_interval <- function(ci, digits = 2, use_sci_notation = FALSE) {
   )
 }
 
-report_model_elt <- function(mod, elt, digits = 2, use_sci_notation = FALSE, escape = TRUE) {
+report_model_elt <- function(mod, elt, digits = 2, use_sci_notation = FALSE, escape = TRUE, abs_est = FALSE) {
   format <- if (isTRUE(use_sci_notation)) "E" else "f"
   wrap <- if (isTRUE(escape)) "$" else ""
 
+  estimate <- coef(mod)[[elt]]
+
+  if (isTRUE(abs_est)) {
+    estimate <- abs(estimate)
+  }
+
   paste0(
     wrap,
-    formatC(coef(mod)[[elt]], digits = digits, format = format),
+    formatC(estimate, digits = digits, format = format),
     "\\pm",
     formatC(std_errs(mod)[[elt]], digits = digits, format = format),
     wrap
@@ -122,13 +128,6 @@ line_color2 <- "#027ea5"
 
 hist_fill <- "#dadada"
 hist_color <- "grey"
-
-# ---- question3 ----
-dat_q1 <- data.table::fread(here::here("homework4/earnings.csv")) |>
-  tidytable::mutate(
-    age10 = age / 10,
-    age10_sq = age10^2,
-  )
 
 # ---- question5 ----
 dat_q5 <- data.table::fread(here::here("homework9/pollution.csv"))
@@ -239,7 +238,16 @@ plt_q5f4 <- ggplot(
   facet_wrap(~var) +
   theme_bw()
 
-mod_q5_4 <- lm(mort ~ log(hc) + log(nox) + log(so2), data = dat_q5)
+dat_q5_c <- dat_q5 |>
+  tidytable::select(mort, hc, nox, so2) |>
+  tidytable::mutate(
+    tidytable::across(
+      .cols = tidyselect::all_of(c("hc", "nox", "so2")),
+      .fns = log,
+    ),
+  )
+
+mod_q5_4 <- lm(mort ~ ., data = dat_q5_c)
 
 tab_q5t2 <- tidytable::tidytable(
   "$\\alpha$" = report_model_elt(mod_q5_4, 1),
@@ -247,3 +255,48 @@ tab_q5t2 <- tidytable::tidytable(
   "$\\beta_N$" = report_model_elt(mod_q5_4, 3),
   "$\\beta_S$" = report_model_elt(mod_q5_4, 4),
 )
+
+plt_q5f5a <- ggplot(
+  dat_q5_c |>
+    tidytable::mutate(
+      .pred = predict(mod_q5_4, list(
+        hc = hc,
+        nox = rep(0, length(hc)),
+        so2 = rep(0, length(so2))
+      ))
+    ),
+  aes(x = hc, y = mort),
+) +
+  geom_point(alpha = 0.4) +
+  geom_line(aes(y = .pred), color = line_color) +
+  theme_bw()
+
+plt_q5f5b <- ggplot(
+  dat_q5_c |>
+    tidytable::mutate(
+      .pred = predict(mod_q5_4, list(
+        hc = rep(0, length(hc)),
+        nox = nox,
+        so2 = rep(0, length(so2))
+      ))
+    ),
+  aes(x = nox, y = mort),
+) +
+  geom_point(alpha = 0.4) +
+  geom_line(aes(y = .pred), color = line_color) +
+  theme_bw()
+
+plt_q5f5c <- ggplot(
+  dat_q5_c |>
+    tidytable::mutate(
+      .pred = predict(mod_q5_4, list(
+        hc = rep(0, length(hc)),
+        nox = rep(0, length(nox)),
+        so2 = so2
+      ))
+    ),
+  aes(x = so2, y = mort),
+) +
+  geom_point(alpha = 0.4) +
+  geom_line(aes(y = .pred), color = line_color) +
+  theme_bw()
