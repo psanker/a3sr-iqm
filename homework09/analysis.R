@@ -130,7 +130,7 @@ hist_fill <- "#dadada"
 hist_color <- "grey"
 
 # ---- question5 ----
-dat_q5 <- data.table::fread(here::here("homework9/pollution.csv"))
+dat_q5 <- data.table::fread(here::here("homework09/pollution.csv"))
 
 # mort: Mortality rate
 # hc: Hydrocarbon particulates (guessing this is ~PM2.5)

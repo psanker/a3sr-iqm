@@ -1,0 +1,174 @@
+---
+title: "Homework 10"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: "../preamble.tex"
+    toc: false
+    extra_dependencies: "float"
+    number_sections: false
+---
+
+```{r setup1, include=FALSE, cache=FALSE}
+knitr::read_chunk(here::here("homework10/analysis.R"))
+
+# Allowing code chunk crossreferences
+# https://stackoverflow.com/questions/50702942/does-rmarkdown-allow-captions-and-references-for-code-chunks
+old_source <- knitr::knit_hooks$get("source")
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- old_source(x, options)
+
+  if (!is.null(options$code.cap)) {
+    x <- paste0("\\label{", options$label, "}", x)
+    x <- paste0("\\captionof{chunk}{", options$code.cap, "}", x)
+  }
+
+  x
+})
+```
+
+```{r preamble, include=FALSE}
+```
+
+# Question 1
+
+# Question 2
+
+# Question 3
+
+```{r q3f1, echo=FALSE, out.width="65%", fig.cap="Shifting the logistic curve over to the left", fig.align="center"}
+dat_q3 <- tidytable::tidytable(
+  x = seq(0, 10, length.out = 100)
+) |>
+  tidytable::summarise(
+    z = c(rep(0, length(x)), rep(1, length(x))),
+    x = c(x, x),
+  ) |>
+  tidytable::mutate(
+    y = plogis(-1.9 + 0.7 * z + 0.7 * x),
+    z = factor(z),
+  )
+
+ggplot(
+  dat_q3,
+  aes(x = x, y = y, color = z),
+) +
+  geom_path() +
+  scale_colour_manual(values = c(
+    "0" = line_color,
+    "1" = line_color2
+  )) +
+  theme_bw()
+```
+
+Adding the $0.7$ to the intercept when $z = 1$ has the effect of shifting the inflection point of the logistic curve to the left (see Fig. \@ref(fig:q3f1)).
+
+# Question 4
+
+```{r q4f1, echo=FALSE, out.width="65%", fig.cap="Logistic regression of heaviness against height", fig.align="center"}
+dat_q4 <- tidytable::tidytable(
+  height = seq(48, 84),
+) |>
+  tidytable::mutate(
+    prob = plogis(-21.51 + 0.28 * height),
+    heavy = map_int(prob, \(p) sample(0:1, 1, prob = c(1 - p, p))),
+  )
+
+ggplot(
+  dat_q4,
+  aes(x = height)
+) +
+  geom_jitter(
+    aes(y = heavy),
+    width = 0.05,
+    height = 0.025,
+    alpha = 0.4,
+  ) +
+  geom_path(
+    aes(y = prob),
+    color = line_color,
+  ) +
+  geom_vline(xintercept = 76.82, lty = 3) +
+  labs(x = "Height (in)", y = "Is heavy?") +
+  theme_bw()
+```
+
+The figure of "heaviness" against height (Fig. \@ref(fig:q4f1)) is measured from people who are 4 feet tall to those who are 7 feet tall -- a usually plausible range of human heights. The point of 50% probability is $21.51\mathrm{in} / 0.28 = `r round(21.51 / 0.28, 2)`\mathrm{in}$. Near the 50% mark, a difference of 1 inch in height corresponds to an approximate $0.28 / 4 = 0.07$ change in probability.
+
+# Question 5
+
+```{r question5, include=FALSE}
+```
+
+Firstly, let's consider the model
+
+\begin{align}\label{eq:q5m1}
+\begin{split}
+\textsc{rodent}&\sim\mathrm{Bern}(p) \\
+\mathrm{logit}(p)&\sim \alpha_{[\textsc{race}]}
+\end{split}
+\end{align}
+
+where the $\alpha_{[\textsc{race}]}$ is shorthand for dummies for the varying intercept model. To get the best kind of predictive capability, the membership percentage of each level in $\textsc{race}$ probably should be checked to ensure there aren't any huge class imbalances.
+
+```{r q1t1, echo=FALSE}
+dat_q5 |>
+  janitor::tabyl(race) |>
+  tidytable::rename(Race = race, N = n, Percent = percent) |>
+  kableExtra::kable(
+    booktabs = TRUE,
+    digits = 2,
+    caption = "Unrepresented levels in $\\textsc{race}$ that should be collapsed",
+  ) |>
+  kableExtra::kable_styling(latex_options = "hold_position")
+```
+
+Tab. \@ref(tab:q1t1) shows that the Native American and Two or More levels should probably be combined to add more predictive power to the model. Doing so yields model (\ref{eq:q5m1}) shown in Tab. \@ref(tab:q5t2)
+
+```{r q5t2, echo=FALSE}
+kableExtra::kable(
+  tab_q5t2,
+  booktabs = TRUE,
+  escape = FALSE,
+  caption = "Estimates for model (\\ref{eq:q5m1})"
+) |>
+  kableExtra::kable_styling(latex_options = "HOLD_position")
+```
+
+Note that the reference class for model (\ref{eq:q5m1}) is "White/non-Hispanic"; therefore, if we were to compare, say, groups of White people and Puerto Rican people, on average the Puerto Rican people would have `r round(coef(mod_q5_1)[[3]], 2)` more logit probability of experiencing rats in their domiciles; more clearly, on average Puerto Rican people would have a probability of `r round(plogis(coef(mod_q5_1)[[1]] + coef(mod_q5_1)[[3]]), 2)` of experiencing rats in their domiciles, whereas on average White people would have a probability of `r round(plogis(coef(mod_q5_1)[[1]]), 2)`.
+
+Using $\textsc{race}$ alone in this model is a crude proxy for the socioeconomic realities often experienced by these groups. It would be more accurate to use the building and neighborhood attributes themselves to make better predictions. I made two models: one race-agnostic, and one race-aware.
+
+\begin{align}
+\begin{split}
+\textsc{rodent}&\sim\mathrm{Bern}(p) \\
+\mathrm{logit}(p)&\sim 
+\begin{array}{l}
+\alpha_{[\textsc{business}]} + \alpha_{[\textsc{old}]} + \alpha_{[\textsc{no ext}]} + \\ 
+\alpha_{[\textsc{win}]} + \alpha_{[\textsc{flr}]} + \alpha_{[\textsc{cracks}]} + \\
+\alpha_{[\textsc{holes}]} + \alpha_{[\textsc{leaks}]} + \alpha_{[\textsc{boards}]} + \alpha_{[\textsc{housing}]}
+\end{array}
+\end{split}
+\end{align}
+
+For this part, I employed a standard train/test split. To not oversample certain communities over others, I stratified by $\textsc{borough}$ and then retained 80% of observations for training (withholding 20% for testing). The model estimates are enumerated in Tab. \@ref(tab:q5t3). What's interesting to note is that $\textsc{race}$ does not modify the predictive capabilities of the model too much. While it *appears* the presence of $\textsc{race}$ creates stronger predictions when being included, this is just an artifact of the inner machinery of this particular model, akin to the various cogs and flywheels in a tide predicting machine. 
+
+```{r q5f1, echo=FALSE, fig.align="center", fig.cap="ROC curves for each model employed in this investigation", out.width="85%", fig.pos="H"}
+plt_roc_q5
+```
+
+A better comparison would be to examine the ROC curves for each model, shown in Fig. \@ref(fig:q5f1). While the race-agnostic and race-aware models seem to have comparable predictive capabilities, they both outperform the race-only model of **(a)**. In practice, this means that if one were to continue collecting data for rat presence predictions, objective measurements of the buildings and neighborhoods themselves would be good enough. This makes sense since, as previously mentioned, race is a coarse proxy to the socioeconomic realities of certain communities. This problem is a cautionary tale about making causal implications from model coefficients, especially GLMs. If I were to make improvements to these models, I would try to at least assign neighborhood identifiers to buildings to create a GLMM which takes advantage of partial pooling.
+
+```{r q5t3, echo=FALSE}
+knitr::kable(
+  tab_q5t3,
+  booktabs = TRUE,
+  digits = 2,
+  caption = "Top table is for the race-agnostic model. Bottom table is for the race-aware model."
+) |>
+  kableExtra::kable_styling()
+```
