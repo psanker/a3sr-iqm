@@ -1,0 +1,113 @@
+---
+title: "Homework 11"
+subtitle: "IQM"
+date: "`r strftime(Sys.Date(), format = '%Y-%m-%d')`"
+author: Patrick Anker
+header-includes:
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: "../preamble.tex"
+    toc: false
+    extra_dependencies: "float"
+    number_sections: true
+---
+
+```{r setup1, include=FALSE, cache=FALSE}
+knitr::read_chunk(here::here("homework11/analysis.R"))
+
+# Allowing code chunk crossreferences
+# https://stackoverflow.com/questions/50702942/does-rmarkdown-allow-captions-and-references-for-code-chunks
+old_source <- knitr::knit_hooks$get("source")
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- old_source(x, options)
+
+  if (!is.null(options$code.cap)) {
+    x <- paste0("\\label{", options$label, "}", x)
+    x <- paste0("\\captionof{chunk}{", options$code.cap, "}", x)
+  }
+
+  x
+})
+```
+
+```{r preamble, include=FALSE}
+```
+
+# Question 1
+
+```{r question1, include=FALSE}
+```
+
+The data generating process is given as follows:
+
+\begin{align*}
+\textsc{pass}_i&\sim\mathrm{Bern}(p_i) \\
+\mathrm{logit}(p_i)&= a + bx_i + \theta z_i \\
+x_i&\sim\mathrm{Unif}(0, 100) \\
+z_i&\sim\mathrm{Bern}(0.5)
+\end{align*}
+
+The constraints given in the problem constitute solving a system of linear equations to get a set of possible model parameters:
+
+\begin{equation*}
+\left(
+\begin{array}{cccc}
+1 & 50 & 0 & \mathrm{logit}(.6) \\
+1 & 100 & 0 & \mathrm{logit}(.8) \\
+1 & 50 & 1 & \mathrm{logit}(.7)
+\end{array}
+\right)
+\end{equation*}
+
+The "50" values are due to being the expected value of $\mathrm{Unif}(0, 100)$. By Gauss-Jordan Elimination, this system of equations reduces to
+
+
+\begin{equation*}
+\left(
+\begin{array}{cccc}
+1 & 0 & 0 & `r mat_rref[1, 4]` \\
+0 & 1 & 0 & `r mat_rref[2, 4]` \\
+0 & 0 & 1 & `r mat_rref[3, 4]`
+\end{array}
+\right)
+\end{equation*}
+
+giving values for $a$, $b$, and $\theta$, respectively.
+
+```{r question1-sim, include=FALSE, cache=TRUE}
+```
+
+# Question 2
+
+```{r question2, include=FALSE}
+```
+
+I elected to use the latent variable formulation for the data points $z_i$. The plots are found in Fig. \@ref(fig:q2f1).
+
+```{r q2f1, echo=FALSE, fig.cap="(a) Data simulated from a logistic regression model, along with a fit the data; (b) An inspection of 10 binned averages compared to the data", fig.align="center", fig.ncol=2, out.width="47%", fig.subcap=c("", ""), fig.pos="H"}
+plt_q2f1a
+plt_q2f1b
+```
+
+# Question 3
+
+```{r question3, include=FALSE}
+```
+
+To generate the band lines, we need to do a little algebra to express one of the predictors in terms of the other:
+
+\begin{align*}
+\mathrm{logit}(p) &= \alpha + \beta_1 x_1 + \beta_2 x_2 \\
+\beta_2 x_2 &= \mathrm{logit}(p) - \alpha - \beta_1 x_1 \\
+x_2(x_1) &= \frac{1}{\beta_2}\left(\mathrm{logit}(p) - \alpha\right) - \frac{\beta_1}{\beta_2}x_1
+\end{align*}
+
+This will allow us to re-express the $\mathrm{logit}(p)$ terms as constants for the intercept.
+
+```{r q3f1, echo=FALSE, fig.cap="Simulated data with 10%, 50%, and 90% discrimination lines from a logistic regression of $y$ against $x_1$ and $x_2$.", out.width="65%", fig.align="center"}
+plt_q3f1
+```
+
+The discrimination lines shown in Fig. \@ref(fig:q3f1) indicate where the binary values will distributed. That is, along the black line (the 50% discrimination line) there is a $Pr(y = 1)$ of 0.5. The red and blue dotted lines effectively bound the area of most probable "mixing" of values, which is why most of the heterogeneity of the binary values is between the red and blue dotted lines.
+
