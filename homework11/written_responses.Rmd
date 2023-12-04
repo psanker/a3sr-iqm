@@ -73,10 +73,19 @@ The "50" values are due to being the expected value of $\mathrm{Unif}(0, 100)$. 
 \right)
 \end{equation*}
 
-giving values for $a$, $b$, and $\theta$, respectively.
+giving values for $a$, $b$, and $\theta$, respectively. The "effect size" is $\theta$ in this scenario, as it is the average difference in logit probability between the treatment ($z = 1$) and control ($z = 0$) groups. Running a simulation of 50 observations 10,000 times shows how often this true treatment effect is captured in the estimated treatment effect interval.
 
 ```{r question1-sim, include=FALSE, cache=TRUE}
 ```
+
+```{r question1-bc, include=FALSE}
+```
+
+```{r q1f1, echo=FALSE, out.width="70%", fig.align="center", fig.cap="Examination of simulations and how many contain the true effect coefficient within a 68% confidence interval", fig.pos="H"}
+plt_q1f1
+```
+
+Fig. \@ref(fig:q1f1) shows the first 100 simulations and whether or not their estimates of $\theta$ contain the true value of $\theta$ within 1 standard error. I elected to chose the first 100 rather than all 10,000 because it's easier to visualize. It looks like a little more than half of the estimates contain the true value, which makes sense since approximately 68% of the estimates should be contained within the interval. Overall, `r sims[, mean(in_50) * 100]`\% of the simulations have the true $\theta$ contained in the 50% interval, and `r sims[, 100 * mean(in_95)]`\% of the simulations have the true $\theta$ contained in the 95% interval.
 
 # Question 2
 

@@ -157,6 +157,7 @@ sims <- lapply(seq_len(1e4), \(i_sim) {
     se_theta = std_errs(mod)[[3]],
   ) |>
     tidytable::mutate(
+      in_68 = abs(mat_rref[3, 4] - est_theta) < se_theta,
       in_50 = abs(mat_rref[3, 4] - est_theta) < 0.67 * se_theta,
       in_95 = abs(mat_rref[3, 4] - est_theta) < 1.96 * se_theta,
     )
@@ -164,6 +165,20 @@ sims <- lapply(seq_len(1e4), \(i_sim) {
   data.table::rbindlist()
 
 # ---- question1-bc ----
+plt_q1f1 <- ggplot(
+  sims |>
+    tidytable::mutate(i = .I) |>
+    tidytable::slice_head(n = 100),
+  aes(x = i, y = est_theta),
+) +
+  geom_point(aes(color = in_68), alpha = 0.5) +
+  geom_errorbar(
+    aes(ymin = est_theta - se_theta, ymax = est_theta + se_theta),
+    alpha = 0.3,
+  ) +
+  geom_hline(aes(yintercept = mat_rref[3, 4]), lty = 5) +
+  labs(x = "Simulation number", y = "Estimate of theta", color = "True within 1 SE?") +
+  theme_bw()
 
 # ---- question2 ----
 line_kinds <- c(
